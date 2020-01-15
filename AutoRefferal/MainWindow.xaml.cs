@@ -26,7 +26,7 @@ namespace AutoRefferal
         public MainWindow()
         {
             InitializeComponent();
-            LoadAccounts();
+            accounts = Account.LoadAccounts();
             refferals = Refferal.LoadRefferals();
         }
 
@@ -288,7 +288,7 @@ namespace AutoRefferal
                                                 {
                                                     SaveAccountInfo(buffAccounts[i], "Зарегистрирован");
                                                     accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
-                                                    SaveAccounts();
+                                                    Account.SaveAccounts(accounts);
                                                     item.ActivatedAccounts++;
                                                     Refferal.SaveRefferals(refferals);
                                                 }
@@ -298,7 +298,7 @@ namespace AutoRefferal
                                                     {
                                                         SaveAccountInfo(buffAccounts[i], "Использован, но не подтвержден");
                                                         accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
-                                                        SaveAccounts();
+                                                        Account.SaveAccounts(accounts);
                                                     }
                                                     else
                                                     {
@@ -330,7 +330,7 @@ namespace AutoRefferal
                                     DeclinePhone(phone);
                                     SaveAccountInfo(accounts[i], "Проблема с имейлом");
                                     accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
-                                    SaveAccounts();
+                                    Account.SaveAccounts(accounts);
                                 }
                             }
                             else
@@ -421,7 +421,7 @@ namespace AutoRefferal
                 }
                 File.Delete("Accounts.txt");
                 MessageBox.Show($"Добавлено {accounts.Count} аккаунтов");
-                SaveAccounts();
+                Account.SaveAccounts(accounts);
 
             }
             catch (Exception)
@@ -452,35 +452,6 @@ namespace AutoRefferal
             using (StreamWriter sw = new StreamWriter("log.txt", true))
             {
                 sw.WriteLine(DateTime.Now.ToString() + "   " + log);
-            }
-        }
-
-        /// <summary>
-        /// Сохранение аккаунтов в файл
-        /// </summary>
-        public void SaveAccounts()
-        {
-            using (StreamWriter sw = new StreamWriter("Accounts.dat"))
-            {
-                sw.Write(SerializeHelper.Serialize(accounts));
-            }
-        }
-
-        /// <summary>
-        /// Загрузка аккаунтов из файла
-        /// </summary>
-        public void LoadAccounts()
-        {
-            try
-            {
-                using (StreamReader sr = new StreamReader("Accounts.dat"))
-                {
-                    accounts = SerializeHelper.Desirialize<List<Account>>(sr.ReadToEnd());
-                }
-            }
-            catch (Exception)
-            {
-                accounts = new List<Account>();
             }
         }
 
