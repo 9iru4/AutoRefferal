@@ -27,7 +27,7 @@ namespace AutoRefferal
         {
             InitializeComponent();
             LoadAccounts();
-            LoadRefferals();
+            refferals = Refferal.LoadRefferals();
         }
 
         /// <summary>
@@ -290,7 +290,7 @@ namespace AutoRefferal
                                                     accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
                                                     SaveAccounts();
                                                     item.ActivatedAccounts++;
-                                                    SaveRefferals();
+                                                    Refferal.SaveRefferals(refferals);
                                                 }
                                                 else
                                                 {
@@ -377,7 +377,7 @@ namespace AutoRefferal
         {
             driver.FindElement(By.Name("RegistrationForm[email]")).SendKeys(Email);
         }
-        
+
         /// <summary>
         /// Ввод рефферального кода для поля пригласивший
         /// </summary>
@@ -485,35 +485,6 @@ namespace AutoRefferal
         }
 
         /// <summary>
-        /// Сохранение рефферальных кодов в файл
-        /// </summary>
-        public void SaveRefferals()
-        {
-            using (StreamWriter sw = new StreamWriter("Refferals.dat"))
-            {
-                sw.Write(SerializeHelper.Serialize(refferals));
-            }
-        }
-
-        /// <summary>
-        /// Загрузка рефферальных кодов в файл
-        /// </summary>
-        public void LoadRefferals()
-        {
-            try
-            {
-                using (StreamReader sr = new StreamReader("Refferals.dat"))
-                {
-                    refferals = SerializeHelper.Desirialize<List<Refferal>>(sr.ReadToEnd());
-                }
-            }
-            catch (Exception)
-            {
-                refferals = new List<Refferal>();
-            }
-        }
-
-        /// <summary>
         /// Получение новых реферальных кодов из файла
         /// </summary>
         /// <returns>Результат получения кодов</returns>
@@ -529,7 +500,7 @@ namespace AutoRefferal
                         if (refferals.Where(x => x.Code == str).FirstOrDefault() == null)
                             refferals.Add(new Refferal(str, 0));
                     }
-                    SaveRefferals();
+                    Refferal.SaveRefferals(refferals);
                     File.Delete("Refferals.txt");
                     return true;
                 }
