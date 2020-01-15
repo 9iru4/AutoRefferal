@@ -10,7 +10,7 @@ namespace AutoRefferal
 
         public string StatusCode { get; set; }
 
-        public int Code { get; set; }
+        public string Code { get; set; }
 
         public PhoneNumber()
         {
@@ -90,7 +90,7 @@ namespace AutoRefferal
                     {
                         var res = result.Split(':');
                         StatusCode = res[0];
-                        Code = int.Parse(res[1]);
+                        Code = res[1];
                     }
                     else
                     {

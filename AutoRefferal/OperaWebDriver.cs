@@ -63,7 +63,11 @@ namespace AutoRefferal
         /// <returns>Получен ли код</returns>
         public bool GetCode()
         {
-            driver.FindElement(By.Name("RegistrationForm[phone]")).SendKeys(phone.Number.ToString());
+            foreach (var item in phone.Number)
+            {
+                driver.FindElement(By.Name("RegistrationForm[phone]")).SendKeys(item.ToString());
+                Thread.Sleep(50);
+            }
             Thread.Sleep(1000);
             driver.FindElement(By.Id("phone_code-button")).Click();
             Thread.Sleep(1000);
@@ -75,7 +79,11 @@ namespace AutoRefferal
                 phone.GetCode();
                 if (phone.StatusCode.Contains("STATUS_OK"))
                 {
-                    driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(phone.Code.ToString());
+                    foreach (var item in phone.Code)
+                    {
+                        driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(item.ToString());
+                        Thread.Sleep(50);
+                    }
                     return true;
                 }
                 else
@@ -84,7 +92,11 @@ namespace AutoRefferal
                     phone.GetCode();
                     if (phone.StatusCode.Contains("STATUS_OK"))
                     {
-                        driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(phone.Code.ToString());
+                        foreach (var item in phone.Code)
+                        {
+                            driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(item.ToString());
+                            Thread.Sleep(50);
+                        }
                         return true;
                     }
                     else
@@ -292,7 +304,12 @@ namespace AutoRefferal
         /// <param name="Name">Имя для ввода</param>
         public void SendName(string Name)
         {
-            driver.FindElement(By.Name("RegistrationForm[first_name]")).SendKeys(Name);
+            foreach (var item in Name)
+            {
+                driver.FindElement(By.Name("RegistrationForm[first_name]")).SendKeys(item.ToString());
+                Thread.Sleep(50);
+            }
+
         }
 
         /// <summary>
@@ -301,7 +318,11 @@ namespace AutoRefferal
         /// <param name="Email">Имейл для ввода</param>
         public void SendEmail(string Email)
         {
-            driver.FindElement(By.Name("RegistrationForm[email]")).SendKeys(Email);
+            foreach (var item in Email)
+            {
+                driver.FindElement(By.Name("RegistrationForm[email]")).SendKeys(item.ToString());
+                Thread.Sleep(50);
+            }
         }
 
         /// <summary>
@@ -310,7 +331,11 @@ namespace AutoRefferal
         /// <param name="refferal"></param>
         public void SendRefferal(string refferal)
         {
-            driver.FindElement(By.Name("RegistrationForm[rcode]")).SendKeys(refferal);
+            foreach (var item in refferal)
+            {
+                driver.FindElement(By.Name("RegistrationForm[rcode]")).SendKeys(item.ToString());
+                Thread.Sleep(50);
+            }
         }
 
         /// <summary>
