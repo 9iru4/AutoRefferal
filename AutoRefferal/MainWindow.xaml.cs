@@ -19,6 +19,10 @@ namespace AutoRefferal
         List<Account> accounts;
         PhoneNumber phone;
         List<Refferal> refferals;
+
+        /// <summary>
+        /// Инициализация программы и загрузка данных
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -27,7 +31,7 @@ namespace AutoRefferal
         }
 
         /// <summary>
-        /// Получение номера телефона для пг
+        /// Получение телефона для отправки смс
         /// </summary>
         /// <returns>телефон и ид</returns>
         public PhoneNumber GetPhoneNumber()
@@ -53,10 +57,10 @@ namespace AutoRefferal
         }
 
         /// <summary>
-        /// Сообщение на номер отправлено
+        /// Отправка уведомления об отправленном смс
         /// </summary>
         /// <param name="number">Телефон</param>
-        /// <returns>телефон с новым ответом</returns>
+        /// <returns>Телефон</returns>
         public PhoneNumber MessageSend(PhoneNumber number)
         {
             WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=setStatus&status=1&id=" + number.Id.ToString());//activate number
@@ -73,10 +77,10 @@ namespace AutoRefferal
         }
 
         /// <summary>
-        /// Получаем смс
+        /// Получаем смс код
         /// </summary>
         /// <param name="number">Телефон</param>
-        /// <returns>Телефон с смс</returns>
+        /// <returns>Телефон</returns>
         public PhoneNumber GetCode(PhoneNumber number)
         {
             WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=getStatus&id=" + phone.Id);//get message
@@ -120,6 +124,10 @@ namespace AutoRefferal
             }
         }
 
+        /// <summary>
+        /// Сообщаем об отмене использования номера
+        /// </summary>
+        /// <param name="number">Телефон</param>
         public void DeclinePhone(PhoneNumber number)
         {
             if (phone != null)
@@ -137,6 +145,75 @@ namespace AutoRefferal
             }
         }
 
+        /// <summary>
+        /// Получение кода смс
+        /// </summary>
+        /// <returns>Получен ли код</returns>
+        public bool GetCode()
+        {
+            driver.FindElement(By.Name("RegistrationForm[phone]")).SendKeys(phone.Number.ToString());
+            Thread.Sleep(1000);
+            driver.FindElement(By.Id("phone_code-button")).Click();
+            Thread.Sleep(1000);
+            try
+            {
+                driver.SwitchTo().Alert().Accept();
+                phone = MessageSend(phone);
+                Thread.Sleep(15000);
+                phone = GetCode(phone);
+                if (phone.StatusCode.Contains("STATUS_OK"))
+                {
+                    driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(phone.Code.ToString());
+                    return true;
+                }
+                else
+                {
+                    Thread.Sleep(15000);
+                    phone = GetCode(phone);
+                    if (phone.StatusCode.Contains("STATUS_OK"))
+                    {
+                        driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(phone.Code.ToString());
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                phone = GetCode(phone);
+                if (phone.StatusCode.Contains("STATUS_OK"))
+                {
+                    driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(phone.Code.ToString());
+                    return true;
+                }
+                else return false;
+            }
+        }
+
+        /// <summary>
+        /// Получение номера телефона для регистрации
+        /// </summary>
+        /// <returns>Получен ли номер</returns>
+        public bool GetNumberPhone()
+        {
+            phone = GetPhoneNumber();
+            if (phone.StatusCode.Contains("ACCESS_NUMBER"))
+            {
+                return true;
+            }
+            else
+            {
+                WriteLog(phone.StatusCode);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Событие закрития окна
+        /// </summary>
         private void Window_Closed(object sender, EventArgs e)
         {
             try
@@ -148,6 +225,9 @@ namespace AutoRefferal
             }
         }
 
+        /// <summary>
+        /// Начало работы атоматической регистрации
+        /// </summary>
         private void StartReg_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -272,96 +352,60 @@ namespace AutoRefferal
             }
         }
 
-        public void SaveAccountInfo(Account acc, string mess)
-        {
-            using (StreamWriter sw = new StreamWriter("UsedAccounts.txt", true))
-            {
-                sw.WriteLine(DateTime.Now.ToString() + ":" + acc.Name + ":" + acc.Email + ":" + mess);
-            }
-        }
-
-        public void WriteLog(string log)
-        {
-            using (StreamWriter sw = new StreamWriter("log.txt", true))
-            {
-                sw.WriteLine(DateTime.Now.ToString() + "   " + log);
-            }
-        }
-
+        /// <summary>
+        /// Нажатие элемента подтвердить
+        /// </summary>
         public void SubmitReg()
         {
             driver.FindElement(By.ClassName("submit")).Click();
         }
 
-        public bool GetCode()
-        {
-            driver.FindElement(By.Name("RegistrationForm[phone]")).SendKeys(phone.Number.ToString());
-            Thread.Sleep(1000);
-            driver.FindElement(By.Id("phone_code-button")).Click();
-            Thread.Sleep(1000);
-            try
-            {
-                driver.SwitchTo().Alert().Accept();
-                phone = MessageSend(phone);
-                Thread.Sleep(15000);
-                phone = GetCode(phone);
-                if (phone.StatusCode.Contains("STATUS_OK"))
-                {
-                    driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(phone.Code.ToString());
-                    return true;
-                }
-                else
-                {
-                    Thread.Sleep(15000);
-                    phone = GetCode(phone);
-                    if (phone.StatusCode.Contains("STATUS_OK"))
-                    {
-                        driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(phone.Code.ToString());
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                phone = GetCode(phone);
-                if (phone.StatusCode.Contains("STATUS_OK"))
-                {
-                    driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(phone.Code.ToString());
-                    return true;
-                }
-                else return false;
-            }
-        }
-
+        /// <summary>
+        /// Ввод имени для поля имя
+        /// </summary>
+        /// <param name="Name">Имя для ввода</param>
         public void SendName(string Name)
         {
             driver.FindElement(By.Name("RegistrationForm[first_name]")).SendKeys(Name);
         }
 
+        /// <summary>
+        /// Ввод имейла для поля имейл
+        /// </summary>
+        /// <param name="Email">Имейл для ввода</param>
         public void SendEmail(string Email)
         {
             driver.FindElement(By.Name("RegistrationForm[email]")).SendKeys(Email);
         }
-
+        
+        /// <summary>
+        /// Ввод рефферального кода для поля пригласивший
+        /// </summary>
+        /// <param name="refferal"></param>
         public void SendRefferal(string refferal)
         {
             driver.FindElement(By.Name("RegistrationForm[rcode]")).SendKeys(refferal);
         }
 
+        /// <summary>
+        /// Нажатие на чекбокс сгенерировать пароль
+        /// </summary>
         public void CheckPass()
         {
             driver.FindElement(By.XPath("//*[@id=\"random_pass\"]")).Click();
         }
 
+        /// <summary>
+        /// Нажатие на чекбокс подтвердить регистрацию
+        /// </summary>
         public void CheckAgrrement()
         {
             driver.FindElement(By.XPath("//*[@id=\"registrationform-aggr\"]")).Click();
         }
 
+        /// <summary>
+        /// Добавление новых аккаунтов из файла
+        /// </summary>
         private void Accounts_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -386,6 +430,34 @@ namespace AutoRefferal
             }
         }
 
+        /// <summary>
+        /// Сохранение информации о текущем аккаунте в файл
+        /// </summary>
+        /// <param name="acc">Аккаунт</param>
+        /// <param name="mess">Статус</param>
+        public void SaveAccountInfo(Account acc, string mess)
+        {
+            using (StreamWriter sw = new StreamWriter("UsedAccounts.txt", true))
+            {
+                sw.WriteLine(DateTime.Now.ToString() + ":" + acc.Name + ":" + acc.Email + ":" + mess);
+            }
+        }
+
+        /// <summary>
+        /// Логиование данных в файл
+        /// </summary>
+        /// <param name="log">Текст для логирования</param>
+        public void WriteLog(string log)
+        {
+            using (StreamWriter sw = new StreamWriter("log.txt", true))
+            {
+                sw.WriteLine(DateTime.Now.ToString() + "   " + log);
+            }
+        }
+
+        /// <summary>
+        /// Сохранение аккаунтов в файл
+        /// </summary>
         public void SaveAccounts()
         {
             using (StreamWriter sw = new StreamWriter("Accounts.dat"))
@@ -394,6 +466,9 @@ namespace AutoRefferal
             }
         }
 
+        /// <summary>
+        /// Загрузка аккаунтов из файла
+        /// </summary>
         public void LoadAccounts()
         {
             try
@@ -409,6 +484,9 @@ namespace AutoRefferal
             }
         }
 
+        /// <summary>
+        /// Сохранение рефферальных кодов в файл
+        /// </summary>
         public void SaveRefferals()
         {
             using (StreamWriter sw = new StreamWriter("Refferals.dat"))
@@ -417,6 +495,9 @@ namespace AutoRefferal
             }
         }
 
+        /// <summary>
+        /// Загрузка рефферальных кодов в файл
+        /// </summary>
         public void LoadRefferals()
         {
             try
@@ -432,6 +513,10 @@ namespace AutoRefferal
             }
         }
 
+        /// <summary>
+        /// Получение новых реферальных кодов из файла
+        /// </summary>
+        /// <returns>Результат получения кодов</returns>
         public bool GetRefferals()
         {
             try
@@ -457,20 +542,9 @@ namespace AutoRefferal
 
         }
 
-        public bool GetNumberPhone()
-        {
-            phone = GetPhoneNumber();
-            if (phone.StatusCode.Contains("ACCESS_NUMBER"))
-            {
-                return true;
-            }
-            else
-            {
-                WriteLog(phone.StatusCode);
-                return false;
-            }
-        }
-
+        /// <summary>
+        /// Добавление новых реферальных кодов
+        /// </summary>
         private void Refferals_Click(object sender, RoutedEventArgs e)
         {
             if (!GetRefferals())
