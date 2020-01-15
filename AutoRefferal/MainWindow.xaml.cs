@@ -326,42 +326,15 @@ namespace AutoRefferal
         }
 
         /// <summary>
-        /// Получение новых реферальных кодов из файла
-        /// </summary>
-        /// <returns>Результат получения кодов</returns>
-        public bool GetRefferals()
-        {
-            try
-            {
-                using (StreamReader sr = new StreamReader("Refferals.txt"))
-                {
-                    while (sr.Peek() >= 0)
-                    {
-                        var str = sr.ReadLine();
-                        if (refferals.Where(x => x.Code == str).FirstOrDefault() == null)
-                            refferals.Add(new Refferal(str, 0));
-                    }
-                    Refferal.SaveRefferals(refferals);
-                    File.Delete("Refferals.txt");
-                    return true;
-                }
-            }
-            catch (Exception e)
-            {
-                WriteLog(e.ToString());
-                return false;
-            }
-        }
-
-        /// <summary>
         /// Добавление новых реферальных кодов
         /// </summary>
         private void Refferals_Click(object sender, RoutedEventArgs e)
         {
-            if (!GetRefferals())
-            {
-                MessageBox.Show("Промокоды не найдены");
-            }
+            var res = Refferal.GetNewRefferals(refferals);
+            if (res == null)
+                MessageBox.Show("Реферальные коды не добавлены");
+            else
+                refferals = res;
         }
     }
 }

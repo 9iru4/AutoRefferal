@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace AutoRefferal
 {
@@ -67,5 +68,34 @@ namespace AutoRefferal
                 return new List<Refferal>();
             }
         }
+
+        /// <summary>
+        /// Добавление новых реферальных кодов в файл
+        /// </summary>
+        /// <param name="refferals">Текущие реферальные коды</param>
+        /// <returns>Новый список реферальных кодов</returns>
+        public static List<Refferal> GetNewRefferals(List<Refferal> refferals)
+        {
+            try
+            {
+                using (StreamReader sr = new StreamReader("Refferals.txt"))
+                {
+                    while (sr.Peek() >= 0)
+                    {
+                        var str = sr.ReadLine();
+                        if (refferals.Where(x => x.Code == str).FirstOrDefault() == null)
+                            refferals.Add(new Refferal(str, 0));
+                    }
+                    SaveRefferals(refferals);
+                    File.Delete("Refferals.txt");
+                    return refferals;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
     }
 }
