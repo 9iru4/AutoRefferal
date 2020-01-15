@@ -182,7 +182,7 @@ namespace AutoRefferal
                                                 Thread.Sleep(5000);
                                                 if (driver.FindElements(By.ClassName("confirmed")).Count == 2)
                                                 {
-                                                    SaveAccountInfo(buffAccounts[i], "Зарегистрирован");
+                                                    buffAccounts[i].SaveAccountInfo("Зарегистрирован");
                                                     accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
                                                     Account.SaveAccounts(accounts);
                                                     item.ActivatedAccounts++;
@@ -192,13 +192,13 @@ namespace AutoRefferal
                                                 {
                                                     if (driver.FindElements(By.ClassName("confirmed")).Count == 1)
                                                     {
-                                                        SaveAccountInfo(buffAccounts[i], "Использован, но не подтвержден");
+                                                        buffAccounts[i].SaveAccountInfo("Использован, но не подтвержден");
                                                         accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
                                                         Account.SaveAccounts(accounts);
                                                     }
                                                     else
                                                     {
-                                                        SaveAccountInfo(buffAccounts[i], "Бабки просраны");
+                                                        buffAccounts[i].SaveAccountInfo("Бабки просраны");
                                                         i--;
                                                     }
                                                 }
@@ -224,7 +224,7 @@ namespace AutoRefferal
                                 else
                                 {
                                     DeclinePhone();
-                                    SaveAccountInfo(accounts[i], "Проблема с имейлом");
+                                    accounts[i].SaveAccountInfo("Проблема с имейлом");
                                     accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
                                     Account.SaveAccounts(accounts);
                                 }
@@ -304,40 +304,14 @@ namespace AutoRefferal
         /// </summary>
         private void Accounts_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                using (StreamReader sr = new StreamReader("Accounts.txt"))
-                {
-                    while (sr.Peek() >= 0)
-                    {
-                        var str = sr.ReadLine().Split(':');
-                        if (accounts.Where(x => x.Email == str[0]).FirstOrDefault() == null)
-                            accounts.Add(new Account(str[0], str[1]));
-                    }
-                }
-                File.Delete("Accounts.txt");
-                MessageBox.Show($"Добавлено {accounts.Count} аккаунтов");
-                Account.SaveAccounts(accounts);
-
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Аккаунты не найдены");
-            }
+            var res = Account.GetNewAccounts(accounts);
+            if (res == null)
+                MessageBox.Show("Аккаунты не добавлены");
+            else
+                accounts = res;
         }
 
-        /// <summary>
-        /// Сохранение информации о текущем аккаунте в файл
-        /// </summary>
-        /// <param name="acc">Аккаунт</param>
-        /// <param name="mess">Статус</param>
-        public void SaveAccountInfo(Account acc, string mess)
-        {
-            using (StreamWriter sw = new StreamWriter("UsedAccounts.txt", true))
-            {
-                sw.WriteLine(DateTime.Now.ToString() + ":" + acc.Name + ":" + acc.Email + ":" + mess);
-            }
-        }
+
 
         /// <summary>
         /// Логиование данных в файл
@@ -377,7 +351,6 @@ namespace AutoRefferal
                 WriteLog(e.ToString());
                 return false;
             }
-
         }
 
         /// <summary>

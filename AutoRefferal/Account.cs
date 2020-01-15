@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace AutoRefferal
 {
@@ -64,6 +65,46 @@ namespace AutoRefferal
             catch (Exception)
             {
                 return new List<Account>();
+            }
+        }
+
+        /// <summary>
+        /// Добавление новых аккаунтов
+        /// </summary>
+        /// <param name="accounts">Текущие аккаунты</param>
+        /// <returns>Список аккаунтов</returns>
+        public static List<Account> GetNewAccounts(List<Account> accounts)
+        {
+            try
+            {
+                using (StreamReader sr = new StreamReader("Accounts.txt"))
+                {
+                    while (sr.Peek() >= 0)
+                    {
+                        var str = sr.ReadLine().Split(':');
+                        if (accounts.Where(x => x.Email == str[0]).FirstOrDefault() == null)
+                            accounts.Add(new Account(str[0], str[1]));
+                    }
+                }
+                File.Delete("Accounts.txt");
+                SaveAccounts(accounts);
+                return accounts;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Сохранение информации о текущем аккаунте в файл
+        /// </summary>
+        /// <param name="mess">Статус</param>
+        public void SaveAccountInfo(string mess)
+        {
+            using (StreamWriter sw = new StreamWriter("UsedAccounts.txt", true))
+            {
+                sw.WriteLine(DateTime.Now.ToString() + ":" + Name + ":" + Email + ":" + mess);
             }
         }
     }
