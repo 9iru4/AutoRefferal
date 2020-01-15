@@ -31,122 +31,19 @@ namespace AutoRefferal
         }
 
         /// <summary>
-        /// Получение телефона для отправки смс
-        /// </summary>
-        /// <returns>телефон и ид</returns>
-        public PhoneNumber GetPhoneNumber()
-        {
-            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=getNumber&service=fx&operator=any&country=0");//get number
-            WebResponse response = request.GetResponse();
-            using (Stream stream = response.GetResponseStream())
-            {
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    var result = reader.ReadToEnd();
-                    if (result.Contains("ACCESS_NUMBER"))
-                    {
-                        var num = result.Split(':');
-                        var code = num[0];
-                        var id = num[1];
-                        var tel = num[2];
-                        return new PhoneNumber(code, id, tel);
-                    }
-                    else return new PhoneNumber(result);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Отправка уведомления об отправленном смс
-        /// </summary>
-        /// <param name="number">Телефон</param>
-        /// <returns>Телефон</returns>
-        public PhoneNumber MessageSend(PhoneNumber number)
-        {
-            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=setStatus&status=1&id=" + number.Id.ToString());//activate number
-            WebResponse response = request.GetResponse();
-            using (Stream stream = response.GetResponseStream())
-            {
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    var result = reader.ReadToEnd();
-                    number.StatusCode = result;
-                    return number;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Получаем смс код
-        /// </summary>
-        /// <param name="number">Телефон</param>
-        /// <returns>Телефон</returns>
-        public PhoneNumber GetCode(PhoneNumber number)
-        {
-            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=getStatus&id=" + phone.Id);//get message
-            WebResponse response = request.GetResponse();
-            using (Stream stream = response.GetResponseStream())
-            {
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    var result = reader.ReadToEnd();
-                    if (result.Contains("STATUS_OK"))
-                    {
-                        var res = result.Split(':');
-                        number.StatusCode = res[0];
-                        number.Code = int.Parse(res[1]);
-                        return number;
-                    }
-                    else
-                    {
-                        number.StatusCode = result;
-                        return number;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Сообщаем об успешном использовании номера
-        /// </summary>
-        /// <param name="number">Телефон</param>
-        public void NumberConformation(PhoneNumber number)
-        {
-            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=setStatus&status=6&id=" + number.Id.ToString());//activate number
-            WebResponse response = request.GetResponse();
-            using (Stream stream = response.GetResponseStream())
-            {
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    var result = reader.ReadToEnd();
-                    number.StatusCode = result;
-                }
-            }
-        }
-
-        /// <summary>
         /// Сообщаем об отмене использования номера
         /// </summary>
         /// <param name="number">Телефон</param>
-        public void DeclinePhone(PhoneNumber number)
+        public void DeclinePhone()
         {
             if (phone != null)
             {
-                WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=setStatus&status=-1&id=" + number.Id.ToString());//activate number
-                WebResponse response = request.GetResponse();
-                using (Stream stream = response.GetResponseStream())
-                {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        var result = reader.ReadToEnd();
-                        number.StatusCode = result;
-                    }
-                }
+                phone.DeclinePhone();
             }
         }
 
         /// <summary>
-        /// Получение кода смс
+        /// Получение кода регистрации по смс
         /// </summary>
         /// <returns>Получен ли код</returns>
         public bool GetCode()
@@ -158,9 +55,9 @@ namespace AutoRefferal
             try
             {
                 driver.SwitchTo().Alert().Accept();
-                phone = MessageSend(phone);
+                phone.MessageSend();
                 Thread.Sleep(15000);
-                phone = GetCode(phone);
+                phone.GetCode();
                 if (phone.StatusCode.Contains("STATUS_OK"))
                 {
                     driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(phone.Code.ToString());
@@ -169,7 +66,7 @@ namespace AutoRefferal
                 else
                 {
                     Thread.Sleep(15000);
-                    phone = GetCode(phone);
+                    phone.GetCode();
                     if (phone.StatusCode.Contains("STATUS_OK"))
                     {
                         driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(phone.Code.ToString());
@@ -183,7 +80,7 @@ namespace AutoRefferal
             }
             catch (Exception)
             {
-                phone = GetCode(phone);
+                phone.GetCode();
                 if (phone.StatusCode.Contains("STATUS_OK"))
                 {
                     driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(phone.Code.ToString());
@@ -199,7 +96,7 @@ namespace AutoRefferal
         /// <returns>Получен ли номер</returns>
         public bool GetNumberPhone()
         {
-            phone = GetPhoneNumber();
+            phone.GetPhoneNumber();
             if (phone.StatusCode.Contains("ACCESS_NUMBER"))
             {
                 return true;
@@ -230,6 +127,7 @@ namespace AutoRefferal
         /// </summary>
         private void StartReg_Click(object sender, RoutedEventArgs e)
         {
+            phone = new PhoneNumber();
             try
             {
                 foreach (var item in refferals)
@@ -254,8 +152,6 @@ namespace AutoRefferal
                             options.AddArgument("user-data-dir=" + Directory.GetCurrentDirectory() + @"\opera");
                             options.AddArgument("private");
                             driver = new OperaDriver(options);
-
-
                             driver.Navigate().GoToUrl("https://pgbonus.ru/register");
                             Thread.Sleep(3000);
                             SendName(buffAccounts[i].Name);
@@ -280,7 +176,7 @@ namespace AutoRefferal
                                             if (!driver.FindElement(By.ClassName("field-registrationform-first_name")).GetAttribute("innerHTML").Contains("в настоящее время регистрация невозможна"))
                                             {
                                                 SubmitReg();
-                                                NumberConformation(phone);
+                                                phone.NumberConformation();
                                                 Thread.Sleep(4000);
                                                 driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
                                                 Thread.Sleep(5000);
@@ -309,14 +205,14 @@ namespace AutoRefferal
                                             }
                                             else
                                             {
-                                                DeclinePhone(phone);
+                                                DeclinePhone();
                                                 i--;
                                             }
 
                                         }
                                         else
                                         {
-                                            DeclinePhone(phone);
+                                            DeclinePhone();
                                             i--;
                                         }
                                     }
@@ -327,7 +223,7 @@ namespace AutoRefferal
                                 }
                                 else
                                 {
-                                    DeclinePhone(phone);
+                                    DeclinePhone();
                                     SaveAccountInfo(accounts[i], "Проблема с имейлом");
                                     accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
                                     Account.SaveAccounts(accounts);
@@ -347,7 +243,7 @@ namespace AutoRefferal
             catch (Exception ex)
             {
                 MessageBox.Show("Произошло неведанное говно, программа перешла в ручной режим.");
-                DeclinePhone(phone);
+                DeclinePhone();
                 WriteLog(ex.ToString());
             }
         }
