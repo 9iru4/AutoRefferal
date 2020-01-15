@@ -62,7 +62,7 @@ namespace AutoRefferal
         /// </summary>
         public void MessageSend()
         {
-            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=setStatus&status=1&id=" + number.Id.ToString());//activate number
+            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=setStatus&status=1&id=" + Id);//activate number
             WebResponse response = request.GetResponse();
             using (Stream stream = response.GetResponseStream())
             {
@@ -79,7 +79,7 @@ namespace AutoRefferal
         /// </summary>
         public void GetCode()
         {
-            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=getStatus&id=" + phone.Id);//get message
+            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=getStatus&id=" + Id);//get message
             WebResponse response = request.GetResponse();
             using (Stream stream = response.GetResponseStream())
             {
@@ -105,7 +105,7 @@ namespace AutoRefferal
         /// </summary>
         public void NumberConformation()
         {
-            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=setStatus&status=6&id=" + number.Id.ToString());//activate number
+            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=setStatus&status=6&id=" + Id);//activate number
             WebResponse response = request.GetResponse();
             using (Stream stream = response.GetResponseStream())
             {
@@ -122,7 +122,7 @@ namespace AutoRefferal
         /// </summary>
         public void DeclinePhone()
         {
-            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=setStatus&status=-1&id=" + number.Id.ToString());//activate number
+            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=setStatus&status=-1&id=" + Id);//activate number
             WebResponse response = request.GetResponse();
             using (Stream stream = response.GetResponseStream())
             {

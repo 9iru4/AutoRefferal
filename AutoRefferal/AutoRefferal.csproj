@@ -61,6 +61,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="OperaWebDriver.cs" />
     <Compile Include="Refferal.cs" />
     <Compile Include="SerializeHelper.cs" />
     <Page Include="MainWindow.xaml">
