@@ -1,5 +1,4 @@
-﻿using OpenQA.Selenium;
-using System.Collections.Generic;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -11,7 +10,8 @@ namespace AutoRefferal
     public partial class MainWindow : Window
     {
         OperaWebDriver operaWebDriver = new OperaWebDriver();
-        Task task;
+        CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
+        CancellationToken token;
         /// <summary>
         /// Инициализация программы и загрузка данных
         /// </summary>
@@ -44,10 +44,10 @@ namespace AutoRefferal
         /// </summary>
         private void StartReg_Click(object sender, RoutedEventArgs e)
         {
-            operaWebDriver.StartAutoReg();
-
+            token = cancelTokenSource.Token;
+            Task task = new Task(() => operaWebDriver.StartAutoReg(token));
+            task.Start();
         }
-
 
         /// <summary>
         /// Закрытие драйвера при выходе из прогаммы
@@ -57,8 +57,12 @@ namespace AutoRefferal
             operaWebDriver.Quit();
         }
 
+        /// <summary>
+        /// Остановка выполенения
+        /// </summary>
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
+            cancelTokenSource.Cancel();
         }
     }
 }

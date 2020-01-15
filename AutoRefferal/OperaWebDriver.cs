@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace AutoRefferal
@@ -150,130 +149,133 @@ namespace AutoRefferal
         /// <summary>
         /// Начало работы атоматической регистрации
         /// </summary>
-        public async void StartAutoReg()
+        public void StartAutoReg(CancellationToken token)
         {
-            await Task.Run(() =>
+            phone = new PhoneNumber();
+            try
             {
-                phone = new PhoneNumber();
-                try
+                foreach (var item in refferals)
                 {
-                    foreach (var item in refferals)
+                    var buffAccounts = new List<Account>(accounts);
+                    if (accounts.Count == 0)
                     {
-                        var buffAccounts = new List<Account>(accounts);
-                        if (accounts.Count == 0)
+                        MessageBox.Show("Аккаунты закончились");
+                    }
+                    if (buffAccounts.Count > 0 && item.ActivatedAccounts < 10)
+                    {
+                        for (int i = 0; item.ActivatedAccounts < 10; i++)
                         {
-                            MessageBox.Show("Аккаунты закончились");
-                        }
-                        if (buffAccounts.Count > 0 && item.ActivatedAccounts < 10)
-                        {
-                            for (int i = 0; item.ActivatedAccounts < 10; i++)
+                            if (token.IsCancellationRequested)
                             {
-                                if (accounts.Count == 0)
-                                    break;
-                                OperaOptions options = new OperaOptions();
-                                using (StreamReader sr = new StreamReader("Settings.txt"))
+                                Quit();
+                                MessageBox.Show("Программа остановлена");
+                                return;
+                            }
+                            if (accounts.Count == 0)
+                                break;
+                            OperaOptions options = new OperaOptions();
+                            using (StreamReader sr = new StreamReader("Settings.txt"))
+                            {
+                                options.BinaryLocation = sr.ReadLine();
+                            }
+                            options.AddArgument("user-data-dir=" + Directory.GetCurrentDirectory() + @"\opera");
+                            options.AddArgument("private");
+                            driver = new OperaDriver(options);
+                            driver.Navigate().GoToUrl("https://pgbonus.ru/register");
+                            Thread.Sleep(3000);
+                            SendName(buffAccounts[i].Name);
+                            Thread.Sleep(3000);
+                            SendEmail(buffAccounts[i].Email);
+                            Thread.Sleep(3000);
+                            SendRefferal(item.Code);
+                            Thread.Sleep(4000);
+                            if (!driver.FindElement(By.ClassName("field-registrationform-first_name")).GetAttribute("innerHTML").Contains("в настоящее время регистрация невозможна"))
+                            {
+                                if (!driver.FindElement(By.ClassName("field-registrationform-email")).GetAttribute("innerHTML").Contains("зарегистрирова"))
                                 {
-                                    options.BinaryLocation = sr.ReadLine();
-                                }
-                                options.AddArgument("user-data-dir=" + Directory.GetCurrentDirectory() + @"\opera");
-                                options.AddArgument("private");
-                                driver = new OperaDriver(options);
-                                driver.Navigate().GoToUrl("https://pgbonus.ru/register");
-                                Thread.Sleep(3000);
-                                SendName(buffAccounts[i].Name);
-                                Thread.Sleep(3000);
-                                SendEmail(buffAccounts[i].Email);
-                                Thread.Sleep(3000);
-                                SendRefferal(item.Code);
-                                Thread.Sleep(4000);
-                                if (!driver.FindElement(By.ClassName("field-registrationform-first_name")).GetAttribute("innerHTML").Contains("в настоящее время регистрация невозможна"))
-                                {
-                                    if (!driver.FindElement(By.ClassName("field-registrationform-email")).GetAttribute("innerHTML").Contains("зарегистрирова"))
+                                    CheckPass();
+                                    Thread.Sleep(2000);
+                                    if (GetNumberPhone())
                                     {
-                                        CheckPass();
-                                        Thread.Sleep(2000);
-                                        if (GetNumberPhone())
+                                        if (GetCode())
                                         {
-                                            if (GetCode())
+                                            Thread.Sleep(2000);
+                                            CheckAgrrement();
+                                            Thread.Sleep(3000);
+                                            if (!driver.FindElement(By.ClassName("field-registrationform-first_name")).GetAttribute("innerHTML").Contains("в настоящее время регистрация невозможна"))
                                             {
-                                                Thread.Sleep(2000);
-                                                CheckAgrrement();
-                                                Thread.Sleep(3000);
-                                                if (!driver.FindElement(By.ClassName("field-registrationform-first_name")).GetAttribute("innerHTML").Contains("в настоящее время регистрация невозможна"))
+                                                SubmitReg();
+                                                phone.NumberConformation();
+                                                Thread.Sleep(4000);
+                                                driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
+                                                Thread.Sleep(5000);
+                                                if (driver.FindElements(By.ClassName("confirmed")).Count == 2)
                                                 {
-                                                    SubmitReg();
-                                                    phone.NumberConformation();
-                                                    Thread.Sleep(4000);
-                                                    driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
-                                                    Thread.Sleep(5000);
-                                                    if (driver.FindElements(By.ClassName("confirmed")).Count == 2)
-                                                    {
-                                                        buffAccounts[i].SaveAccountInfo("Зарегистрирован");
-                                                        accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
-                                                        Account.SaveAccounts(accounts);
-                                                        item.ActivatedAccounts++;
-                                                        Refferal.SaveRefferals(refferals);
-                                                    }
-                                                    else
-                                                    {
-                                                        if (driver.FindElements(By.ClassName("confirmed")).Count == 1)
-                                                        {
-                                                            buffAccounts[i].SaveAccountInfo("Использован, но не подтвержден");
-                                                            accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
-                                                            Account.SaveAccounts(accounts);
-                                                        }
-                                                        else
-                                                        {
-                                                            buffAccounts[i].SaveAccountInfo("Бабки просраны");
-                                                            i--;
-                                                        }
-                                                    }
+                                                    buffAccounts[i].SaveAccountInfo("Зарегистрирован");
+                                                    accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
+                                                    Account.SaveAccounts(accounts);
+                                                    item.ActivatedAccounts++;
+                                                    Refferal.SaveRefferals(refferals);
                                                 }
                                                 else
                                                 {
-                                                    DeclinePhone();
-                                                    i--;
+                                                    if (driver.FindElements(By.ClassName("confirmed")).Count == 1)
+                                                    {
+                                                        buffAccounts[i].SaveAccountInfo("Использован, но не подтвержден");
+                                                        accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
+                                                        Account.SaveAccounts(accounts);
+                                                    }
+                                                    else
+                                                    {
+                                                        buffAccounts[i].SaveAccountInfo("Бабки просраны");
+                                                        i--;
+                                                    }
                                                 }
-
                                             }
                                             else
                                             {
                                                 DeclinePhone();
                                                 i--;
                                             }
+
                                         }
                                         else
                                         {
+                                            DeclinePhone();
                                             i--;
                                         }
                                     }
                                     else
                                     {
-                                        DeclinePhone();
-                                        accounts[i].SaveAccountInfo("Проблема с имейлом");
-                                        accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
-                                        Account.SaveAccounts(accounts);
+                                        i--;
                                     }
                                 }
                                 else
                                 {
-                                    i--;
+                                    DeclinePhone();
+                                    accounts[i].SaveAccountInfo("Проблема с имейлом");
+                                    accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
+                                    Account.SaveAccounts(accounts);
                                 }
-                                driver.Quit();
-                                Thread.Sleep(1000);
                             }
+                            else
+                            {
+                                i--;
+                            }
+                            driver.Quit();
+                            Thread.Sleep(1000);
                         }
                     }
-                    MessageBox.Show("Рефферальные коды закончились");
                 }
-                catch (Exception ex)
-                {
+                MessageBox.Show("Рефферальные коды закончились");
+            }
+            catch (Exception ex)
+            {
 
-                    DeclinePhone();
-                    WriteLog(ex.ToString());
-                    MessageBox.Show("Произошло неведанное говно, программа перешла в ручной режим.");
-                }
-            });
+                DeclinePhone();
+                WriteLog(ex.ToString());
+                MessageBox.Show("Произошло неведанное говно, программа перешла в ручной режим.");
+            }
         }
 
         /// <summary>
