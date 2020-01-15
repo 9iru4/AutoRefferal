@@ -1,0 +1,14 @@
+﻿<Window x:Class="AutoRefferal.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="175.129" Width="233.6" Closed="Window_Closed">
+    <Grid>
+        <Button Name="StartReg" Content="Начать регистрацию" HorizontalAlignment="Left" Margin="40,82,0,0" VerticalAlignment="Top" Width="132" Click="StartReg_Click" Height="23" />
+        <Button Name="Accounts" Content="Аккаунты" HorizontalAlignment="Left" Margin="118,9,0,0" VerticalAlignment="Top" Width="95" Height="20" Click="Accounts_Click"/>
+        <Button Name="Refferals" Content="Промокод" HorizontalAlignment="Left" Margin="10,9,0,0" VerticalAlignment="Top" Width="103" Height="20" Click="Refferals_Click"/>
+
+    </Grid>
+</Window>
