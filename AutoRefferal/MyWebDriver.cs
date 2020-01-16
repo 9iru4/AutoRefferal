@@ -82,16 +82,16 @@ namespace AutoRefferal
             ChromeOptions options = new ChromeOptions();
             foreach (var item in myProxies.ToList())
             {
-                if (item.UsedActivation >= 10)
-                    myProxies.Remove(item);
+                if (item.UsedActivation >= 3)
+                    continue;
                 else
                 {
-                    MyProxy.SaveProxies(myProxies);
+                    options.AddArguments("--proxy-server=socks4://" + item.IpAddress + ":" + item.Port);
+                    options.AddArgument("private");
                     break;
                 }
             }
-            options.AddArguments("--proxy-server=socks4://" + myProxies[0].IpAddress + ":" + myProxies[0].Port);
-            options.AddArgument("private");
+
             driver = new ChromeDriver(options);
         }
 
@@ -244,6 +244,7 @@ namespace AutoRefferal
         /// </summary>
         public void StartAutoReg(CancellationToken token, bool useproxyformfile)
         {
+            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
             try
             {
                 foreach (var item in refferals)
@@ -268,7 +269,14 @@ namespace AutoRefferal
                             }
                             if (accounts.Count == 0)
                                 break;
-                            driver.Navigate().GoToUrl("https://pgbonus.ru/register");
+                            try
+                            {
+                                driver.Navigate().GoToUrl("https://pgbonus.ru/register");
+                            }
+                            catch (Exception)
+                            {
+                                js.ExecuteScript("window.stop()");
+                            }
                             Thread.Sleep(3000);
                             if (driver.PageSource.Contains("error-code"))
                             {
@@ -298,21 +306,31 @@ namespace AutoRefferal
                                     else
                                     {
                                         GetCode(phone.UseAgain);
-                                        phone.UseAgain = false;
                                     }
                                     Thread.Sleep(2000);
                                     CheckAgrrement();
                                     Thread.Sleep(3000);
                                     if (!driver.FindElement(By.ClassName("field-registrationform-first_name")).GetAttribute("innerHTML").Contains("в настоящее время регистрация невозможна"))
                                     {
-                                        SubmitReg();
+
+                                        try
+                                        {
+                                            SubmitReg();
+                                            Thread.Sleep(5000);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            js.ExecuteScript("window.stop()");
+                                        }
                                         phone.NumberConformation();
-                                        Thread.Sleep(5000);
-                                        IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-                                        js.ExecuteScript("window.stop()");
-                                        driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
-                                        Thread.Sleep(5000);
-                                        js.ExecuteScript("window.stop()");
+                                        try
+                                        {
+                                            driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
+                                        }
+                                        catch (Exception)
+                                        {
+                                            js.ExecuteScript("window.stop()");
+                                        }
                                         if (driver.FindElements(By.ClassName("confirmed")).Count == 2)
                                         {
                                             buffAccounts[i].SaveAccountInfo("Зарегистрирован");
@@ -333,7 +351,8 @@ namespace AutoRefferal
                                                 buffAccounts[i].SaveAccountInfo("Обосран");
                                                 accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
                                                 Account.SaveAccounts(accounts);
-                                                phone.UseAgain = true;
+                                                if (!phone.UseAgain)
+                                                    phone.UseAgain = true;
                                                 i--;
                                             }
                                             if (driver.FindElements(By.ClassName("confirmed")).Count == 1)
@@ -346,7 +365,8 @@ namespace AutoRefferal
                                             {
                                                 buffAccounts[i].SaveAccountInfo("Бабки просраны");
                                                 Account.SaveAccounts(accounts);
-                                                phone.UseAgain = true;
+                                                if (!phone.UseAgain)
+                                                    phone.UseAgain = true;
                                                 i--;
                                             }
                                         }
