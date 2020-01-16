@@ -266,6 +266,14 @@ namespace AutoRefferal
                                 break;
                             driver.Navigate().GoToUrl("https://pgbonus.ru/register");
                             Thread.Sleep(3000);
+                            if (driver.PageSource.Contains("error-code"))
+                            {
+                                myProxies.RemoveAt(0);
+                                MyProxy.SaveProxies(myProxies);
+                                i--;
+                                Quit();
+                                continue;
+                            }
                             SendName(buffAccounts[i].Name);
                             Thread.Sleep(3000);
                             SendEmail(buffAccounts[i].Email);
