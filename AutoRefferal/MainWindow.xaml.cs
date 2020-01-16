@@ -18,6 +18,9 @@ namespace AutoRefferal
         public MainWindow()
         {
             InitializeComponent();
+            SelectedBrowser.Items.Add("Opera");
+            SelectedBrowser.Items.Add("Chrome");
+            SelectedBrowser.SelectedIndex = 1;
             operaWebDriver.InitializeWebDriver();
         }
 
@@ -43,7 +46,11 @@ namespace AutoRefferal
         private void StartReg_Click(object sender, RoutedEventArgs e)
         {
             token = cancelTokenSource.Token;
-            Task task = new Task(() => operaWebDriver.StartAutoReg(token, true));
+            bool browser = false;
+            if (SelectedBrowser.SelectedItem.ToString() == "Opera")
+                browser = false;
+            else browser = true;
+            Task task = new Task(() => operaWebDriver.StartAutoReg(token, browser));
             task.Start();
         }
 
