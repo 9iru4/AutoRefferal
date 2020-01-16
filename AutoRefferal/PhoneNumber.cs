@@ -3,14 +3,30 @@ using System.Net;
 
 namespace AutoRefferal
 {
+    /// <summary>
+    /// Класс описывающий телефон
+    /// </summary>
     public class PhoneNumber
     {
+        /// <summary>
+        /// Ключ апи
+        /// </summary>
         public string ApiKey { get; set; }
+        /// <summary>
+        /// Ид
+        /// </summary>
         public string Id { get; set; }
+        /// <summary>
+        /// Номер
+        /// </summary>
         public string Number { get; set; }
-
+        /// <summary>
+        /// Статус код
+        /// </summary>
         public string StatusCode { get; set; }
-
+        /// <summary>
+        /// Код смс
+        /// </summary>
         public string Code { get; set; }
 
         public PhoneNumber()
@@ -18,11 +34,21 @@ namespace AutoRefferal
 
         }
 
+        /// <summary>
+        /// Конструктор класса
+        /// </summary>
+        /// <param name="statusCode">Статус код</param>
         public PhoneNumber(string statusCode)
         {
             StatusCode = statusCode;
         }
 
+        /// <summary>
+        /// Конструктор класса
+        /// </summary>
+        /// <param name="statusCode">Статус код</param>
+        /// <param name="id">Ид</param>
+        /// <param name="number">Номер телефона</param>
         public PhoneNumber(string statusCode, string id, string number)
         {
             Id = id;
@@ -31,6 +57,10 @@ namespace AutoRefferal
             StatusCode = statusCode;
         }
 
+        /// <summary>
+        /// Установка ключа апи
+        /// </summary>
+        /// <param name="key">Ключ апи</param>
         public void SetApiKey(string key)
         {
             ApiKey = key;
