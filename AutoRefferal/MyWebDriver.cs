@@ -149,7 +149,7 @@ namespace AutoRefferal
         /// Получение кода регистрации по смс
         /// </summary>
         /// <returns>Получен ли код</returns>
-        public bool GetCode()
+        public bool GetCode(bool isRetry)
         {
             foreach (var item in phone.Number)
             {
@@ -158,11 +158,15 @@ namespace AutoRefferal
             }
             Thread.Sleep(1000);
             driver.FindElement(By.Id("phone_code-button")).Click();
-            Thread.Sleep(1000);
+            Thread.Sleep(3000);
             try
             {
                 driver.SwitchTo().Alert().Accept();
-                phone.MessageSend();
+                Thread.Sleep(1000);
+                if (isRetry)
+                    phone.RetryCode();
+                else
+                    phone.MessageSend();
                 Thread.Sleep(15000);
                 phone.GetCode();
                 if (phone.StatusCode.Contains("STATUS_OK"))
@@ -286,69 +290,75 @@ namespace AutoRefferal
                                 {
                                     CheckPass();
                                     Thread.Sleep(2000);
-                                    if (GetNumberPhone())
+                                    if (!phone.UseAgain)
                                     {
-                                        if (GetCode())
+                                        GetNumberPhone();
+                                        GetCode(false);
+                                    }
+                                    else
+                                    {
+                                        GetCode(phone.UseAgain);
+                                        phone.UseAgain = false;
+                                    }
+                                    Thread.Sleep(2000);
+                                    CheckAgrrement();
+                                    Thread.Sleep(3000);
+                                    if (!driver.FindElement(By.ClassName("field-registrationform-first_name")).GetAttribute("innerHTML").Contains("в настоящее время регистрация невозможна"))
+                                    {
+                                        SubmitReg();
+                                        phone.NumberConformation();
+                                        Thread.Sleep(5000);
+                                        IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+                                        js.ExecuteScript("window.stop()");
+                                        driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
+                                        Thread.Sleep(5000);
+                                        js.ExecuteScript("window.stop()");
+                                        if (driver.FindElements(By.ClassName("confirmed")).Count == 2)
                                         {
-                                            Thread.Sleep(2000);
-                                            CheckAgrrement();
-                                            Thread.Sleep(3000);
-                                            if (!driver.FindElement(By.ClassName("field-registrationform-first_name")).GetAttribute("innerHTML").Contains("в настоящее время регистрация невозможна"))
-                                            {
-                                                SubmitReg();
-                                                phone.NumberConformation();
-                                                Thread.Sleep(4000);
-                                                driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
-                                                Thread.Sleep(5000);
-                                                if (driver.FindElements(By.ClassName("confirmed")).Count == 2)
-                                                {
-                                                    buffAccounts[i].SaveAccountInfo("Зарегистрирован");
-                                                    accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
-                                                    Account.SaveAccounts(accounts);
-                                                    item.ActivatedAccounts++;
-                                                    Refferal.SaveRefferals(refferals);
-                                                    myProxies[0].UsedActivation++;
-                                                    var prox = myProxies[0];
-                                                    myProxies.RemoveAt(0);
-                                                    myProxies.Add(prox);
-                                                    MyProxy.SaveProxies(myProxies);
-                                                }
-                                                else
-                                                {
-                                                    if (driver.FindElements(By.ClassName("confirmed")).Count == 1)
-                                                    {
-                                                        buffAccounts[i].SaveAccountInfo("Использован, но не подтвержден");
-                                                        accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
-                                                        Account.SaveAccounts(accounts);
-                                                    }
-                                                    else
-                                                    {
-                                                        buffAccounts[i].SaveAccountInfo("Бабки просраны");
-                                                        i--;
-                                                    }
-                                                }
-                                            }
-                                            else
-                                            {
-                                                DeclinePhone();
-                                                i--;
-                                            }
-
+                                            buffAccounts[i].SaveAccountInfo("Зарегистрирован");
+                                            accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
+                                            Account.SaveAccounts(accounts);
+                                            item.ActivatedAccounts++;
+                                            Refferal.SaveRefferals(refferals);
+                                            myProxies[0].UsedActivation++;
+                                            var prox = myProxies[0];
+                                            myProxies.RemoveAt(0);
+                                            myProxies.Add(prox);
+                                            MyProxy.SaveProxies(myProxies);
                                         }
                                         else
                                         {
-                                            DeclinePhone();
-                                            i--;
+                                            if (driver.PageSource.Contains("Ошибка в введенных данных"))
+                                            {
+                                                buffAccounts[i].SaveAccountInfo("Обосран");
+                                                accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
+                                                Account.SaveAccounts(accounts);
+                                                phone.UseAgain = true;
+                                                i--;
+                                            }
+                                            if (driver.FindElements(By.ClassName("confirmed")).Count == 1)
+                                            {
+                                                buffAccounts[i].SaveAccountInfo("Использован, но не подтвержден");
+                                                accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
+                                                Account.SaveAccounts(accounts);
+                                            }
+                                            else
+                                            {
+                                                buffAccounts[i].SaveAccountInfo("Бабки просраны");
+                                                Account.SaveAccounts(accounts);
+                                                phone.UseAgain = true;
+                                                i--;
+                                            }
                                         }
                                     }
                                     else
                                     {
+                                        DeclinePhone();
                                         i--;
                                     }
                                 }
                                 else
                                 {
-                                    DeclinePhone();
                                     accounts[i].SaveAccountInfo("Проблема с имейлом");
                                     accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
                                     Account.SaveAccounts(accounts);
@@ -356,6 +366,7 @@ namespace AutoRefferal
                             }
                             else
                             {
+                                myProxies.RemoveAt(0);
                                 i--;
                             }
                             driver.Quit();
@@ -367,8 +378,6 @@ namespace AutoRefferal
             }
             catch (Exception ex)
             {
-
-                DeclinePhone();
                 WriteLog(ex.ToString());
                 MessageBox.Show("Произошло неведанное говно, программа перешла в ручной режим.");
             }

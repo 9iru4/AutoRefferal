@@ -29,6 +29,8 @@ namespace AutoRefferal
         /// </summary>
         public string Code { get; set; }
 
+        public bool UseAgain { get; set; }
+
         public PhoneNumber()
         {
 
@@ -131,6 +133,29 @@ namespace AutoRefferal
                     else
                     {
                         StatusCode = result;
+                    }
+                }
+            }
+        }
+
+        public bool RetryCode()
+        {
+            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=3&id=" + Id);//activate number
+            WebResponse response = request.GetResponse();
+            using (Stream stream = response.GetResponseStream())
+            {
+                using (StreamReader reader = new StreamReader(stream))
+                {
+
+                    var result = reader.ReadToEnd();
+                    StatusCode = result;
+                    if (result.Contains("ACCESS_RETRY_GET"))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
                     }
                 }
             }

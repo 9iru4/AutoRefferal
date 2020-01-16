@@ -87,7 +87,6 @@ namespace AutoRefferal
                             refferals.Add(new Refferal(str, 0));
                     }
                     SaveRefferals(refferals);
-                    File.Delete("Refferals.txt");
                     return refferals;
                 }
             }
