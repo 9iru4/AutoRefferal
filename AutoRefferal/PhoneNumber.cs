@@ -5,6 +5,7 @@ namespace AutoRefferal
 {
     public class PhoneNumber
     {
+        public string ApiKey { get; set; }
         public string Id { get; set; }
         public string Number { get; set; }
 
@@ -30,12 +31,17 @@ namespace AutoRefferal
             StatusCode = statusCode;
         }
 
+        public void SetApiKey(string key)
+        {
+            ApiKey = key;
+        }
+
         /// <summary>
         /// Получение телефона для отправки смс
         /// </summary>
         public void GetPhoneNumber()
         {
-            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=getNumber&service=fx&operator=any&country=0");//get number
+            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + "&action=getNumber&service=fx&operator=any&country=0");//get number
             WebResponse response = request.GetResponse();
             using (Stream stream = response.GetResponseStream())
             {
@@ -62,7 +68,7 @@ namespace AutoRefferal
         /// </summary>
         public void MessageSend()
         {
-            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=setStatus&status=1&id=" + Id);//activate number
+            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=1&id=" + Id);//activate number
             WebResponse response = request.GetResponse();
             using (Stream stream = response.GetResponseStream())
             {
@@ -79,7 +85,7 @@ namespace AutoRefferal
         /// </summary>
         public void GetCode()
         {
-            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=getStatus&id=" + Id);//get message
+            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + "&action=getStatus&id=" + Id);//get message
             WebResponse response = request.GetResponse();
             using (Stream stream = response.GetResponseStream())
             {
@@ -105,7 +111,7 @@ namespace AutoRefferal
         /// </summary>
         public void NumberConformation()
         {
-            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=setStatus&status=6&id=" + Id);//activate number
+            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=6&id=" + Id);//activate number
             WebResponse response = request.GetResponse();
             using (Stream stream = response.GetResponseStream())
             {
@@ -122,7 +128,7 @@ namespace AutoRefferal
         /// </summary>
         public void DeclinePhone()
         {
-            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=1b2c6c99b521dAed531d16449226396d&action=setStatus&status=-1&id=" + Id);//activate number
+            WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=-1&id=" + Id);//activate number
             WebResponse response = request.GetResponse();
             using (Stream stream = response.GetResponseStream())
             {

@@ -61,6 +61,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="MyProxy.cs" />
     <Compile Include="MyWebDriver.cs" />
     <Compile Include="Refferal.cs" />
     <Compile Include="SerializeHelper.cs" />

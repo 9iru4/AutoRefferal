@@ -21,10 +21,12 @@ namespace AutoRefferal
 
         }
 
-        public void InitializeWebDriver()
+        public void InitializeWebDriver(string key)
         {
             accounts = Account.LoadAccounts();
             refferals = Refferal.LoadRefferals();
+            phone = new PhoneNumber();
+            phone.SetApiKey(key);
         }
 
         public void InitializeOperaDriver()
