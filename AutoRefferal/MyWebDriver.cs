@@ -16,6 +16,7 @@ namespace AutoRefferal
         PhoneNumber phone { get; set; }
         List<Refferal> refferals { get; set; }
         MySettings settings;
+        List<MyProxy> myProxies { get; set; }
 
         public MyWebDriver()
         {
@@ -24,9 +25,9 @@ namespace AutoRefferal
 
         public void InitializeWebDriver()
         {
-
             accounts = Account.LoadAccounts();
             refferals = Refferal.LoadRefferals();
+            myProxies = MyProxy.LoadProxies();
             settings = new MySettings();
             settings.LoadSettings();
             phone = new PhoneNumber();
@@ -58,6 +59,15 @@ namespace AutoRefferal
                 MessageBox.Show("Реферальные коды не добавлены");
             else
                 refferals = res;
+        }
+
+        public void AddNewProxies()
+        {
+            var res = MyProxy.GetNewProxies(myProxies);
+            if (res == null)
+                MessageBox.Show("Прокси не добавлены");
+            else
+                myProxies = res;
         }
 
         public void Quit()
