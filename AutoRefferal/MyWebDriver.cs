@@ -10,20 +10,47 @@ using System.Windows;
 
 namespace AutoRefferal
 {
+    /// <summary>
+    /// Класс описывающий взаимодейстиве с браузером
+    /// </summary>
     public class MyWebDriver
     {
+        /// <summary>
+        /// Веб драйвер
+        /// </summary>
         IWebDriver driver { get; set; }
+        /// <summary>
+        /// Список аккаунтов
+        /// </summary>
         List<Account> accounts { get; set; }
+        /// <summary>
+        /// Телефон
+        /// </summary>
         PhoneNumber phone { get; set; }
+        /// <summary>
+        /// Список рефералов
+        /// </summary>
         List<Refferal> refferals { get; set; }
+        /// <summary>
+        /// Настройки
+        /// </summary>
         MySettings settings;
+        /// <summary>
+        /// Сипсок прокси
+        /// </summary>
         List<MyProxy> myProxies { get; set; }
 
+        /// <summary>
+        /// Конструктор класса
+        /// </summary>
         public MyWebDriver()
         {
 
         }
 
+        /// <summary>
+        /// Инициализация класса
+        /// </summary>
         public void InitializeWebDriver()
         {
             accounts = Account.LoadAccounts();
@@ -35,6 +62,9 @@ namespace AutoRefferal
             phone.SetApiKey(settings.SmsApiKey);
         }
 
+        /// <summary>
+        /// Использование оперы в качестве браузера
+        /// </summary>
         public void InitializeOperaDriver()
         {
             OperaOptions options = new OperaOptions();
@@ -44,6 +74,9 @@ namespace AutoRefferal
             driver = new OperaDriver(options);
         }
 
+        /// <summary>
+        /// Использование хрома в качестве браузера
+        /// </summary>
         public void InitializeChromeWithProxy()
         {
             ChromeOptions options = new ChromeOptions();
@@ -62,6 +95,9 @@ namespace AutoRefferal
             driver = new ChromeDriver(options);
         }
 
+        /// <summary>
+        /// Добавление новых аккаунтов из файла
+        /// </summary>
         public void AddNewAccounts()
         {
             var res = Account.GetNewAccounts(accounts);
@@ -71,6 +107,9 @@ namespace AutoRefferal
                 accounts = res;
         }
 
+        /// <summary>
+        /// Добавление новых рефеалов из файла
+        /// </summary>
         public void AddNewRefferals()
         {
             var res = Refferal.GetNewRefferals(refferals);
@@ -80,6 +119,9 @@ namespace AutoRefferal
                 refferals = res;
         }
 
+        /// <summary>
+        /// Добавление новых прокси из файла
+        /// </summary>
         public void AddNewProxies()
         {
             var res = MyProxy.GetNewProxies(myProxies);
@@ -89,6 +131,9 @@ namespace AutoRefferal
                 myProxies = res;
         }
 
+        /// <summary>
+        /// Остановка драйвера
+        /// </summary>
         public void Quit()
         {
             try
@@ -195,7 +240,6 @@ namespace AutoRefferal
         /// </summary>
         public void StartAutoReg(CancellationToken token, bool useproxyformfile)
         {
-
             try
             {
                 foreach (var item in refferals)
