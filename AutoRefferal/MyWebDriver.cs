@@ -9,14 +9,14 @@ using System.Windows;
 
 namespace AutoRefferal
 {
-    public class OperaWebDriver
+    public class MyWebDriver
     {
         IWebDriver driver { get; set; }
         List<Account> accounts { get; set; }
         PhoneNumber phone { get; set; }
         List<Refferal> refferals { get; set; }
 
-        public OperaWebDriver()
+        public MyWebDriver()
         {
 
         }
@@ -25,6 +25,18 @@ namespace AutoRefferal
         {
             accounts = Account.LoadAccounts();
             refferals = Refferal.LoadRefferals();
+        }
+
+        public void InitializeOperaDriver()
+        {
+            OperaOptions options = new OperaOptions();
+            using (StreamReader sr = new StreamReader("Settings.txt"))
+            {
+                options.BinaryLocation = sr.ReadLine();
+            }
+            options.AddArgument("user-data-dir=" + Directory.GetCurrentDirectory() + @"\opera");
+            options.AddArgument("private");
+            driver = new OperaDriver(options);
         }
 
         public void AddNewAccounts()
@@ -173,14 +185,6 @@ namespace AutoRefferal
                             }
                             if (accounts.Count == 0)
                                 break;
-                            OperaOptions options = new OperaOptions();
-                            using (StreamReader sr = new StreamReader("Settings.txt"))
-                            {
-                                options.BinaryLocation = sr.ReadLine();
-                            }
-                            options.AddArgument("user-data-dir=" + Directory.GetCurrentDirectory() + @"\opera");
-                            options.AddArgument("private");
-                            driver = new OperaDriver(options);
                             driver.Navigate().GoToUrl("https://pgbonus.ru/register");
                             Thread.Sleep(3000);
                             SendName(buffAccounts[i].Name);

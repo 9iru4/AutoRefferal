@@ -9,7 +9,7 @@ namespace AutoRefferal
     /// </summary>
     public partial class MainWindow : Window
     {
-        OperaWebDriver operaWebDriver = new OperaWebDriver();
+        MyWebDriver operaWebDriver = new MyWebDriver();
         CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
         CancellationToken token;
         /// <summary>
@@ -44,6 +44,7 @@ namespace AutoRefferal
         /// </summary>
         private void StartReg_Click(object sender, RoutedEventArgs e)
         {
+            operaWebDriver.InitializeOperaDriver();
             token = cancelTokenSource.Token;
             Task task = new Task(() => operaWebDriver.StartAutoReg(token));
             task.Start();
