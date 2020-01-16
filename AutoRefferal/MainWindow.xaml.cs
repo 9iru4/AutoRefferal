@@ -18,9 +18,8 @@ namespace AutoRefferal
         public MainWindow()
         {
             InitializeComponent();
-            operaWebDriver.InitializeWebDriver("1b2c6c99b521dAed531d16449226396d");
+            operaWebDriver.InitializeWebDriver();
         }
-
 
         /// <summary>
         /// Добавление новых аккаунтов из файла
@@ -29,7 +28,6 @@ namespace AutoRefferal
         {
             operaWebDriver.AddNewAccounts();
         }
-
 
         /// <summary>
         /// Добавление новых реферальных кодов

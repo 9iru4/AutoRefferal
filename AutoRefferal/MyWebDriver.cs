@@ -15,27 +15,28 @@ namespace AutoRefferal
         List<Account> accounts { get; set; }
         PhoneNumber phone { get; set; }
         List<Refferal> refferals { get; set; }
+        MySettings settings;
 
         public MyWebDriver()
         {
 
         }
 
-        public void InitializeWebDriver(string key)
+        public void InitializeWebDriver()
         {
+
             accounts = Account.LoadAccounts();
             refferals = Refferal.LoadRefferals();
+            settings = new MySettings();
+            settings.LoadSettings();
             phone = new PhoneNumber();
-            phone.SetApiKey(key);
+            phone.SetApiKey(settings.SmsApiKey);
         }
 
         public void InitializeOperaDriver()
         {
             OperaOptions options = new OperaOptions();
-            using (StreamReader sr = new StreamReader("Settings.txt"))
-            {
-                options.BinaryLocation = sr.ReadLine();
-            }
+            options.BinaryLocation = settings.OperaPath;
             options.AddArgument("user-data-dir=" + Directory.GetCurrentDirectory() + @"\opera");
             options.AddArgument("private");
             driver = new OperaDriver(options);
