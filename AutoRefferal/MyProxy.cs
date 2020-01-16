@@ -5,13 +5,34 @@ using System.Linq;
 
 namespace AutoRefferal
 {
+    /// <summary>
+    /// Класс описывающий прокси
+    /// </summary>
     public class MyProxy
     {
+        /// <summary>
+        /// Апи ключ
+        /// </summary>
         public string ApiKey { get; set; }
+        /// <summary>
+        /// Ип адрес
+        /// </summary>
         public string IpAddress { get; set; }
+        /// <summary>
+        /// Порт
+        /// </summary>
         public string Port { get; set; }
+        /// <summary>
+        /// Логин
+        /// </summary>
         public string Login { get; set; }
+        /// <summary>
+        /// Пароль
+        /// </summary>
         public string Password { get; set; }
+        /// <summary>
+        /// Количество активаций
+        /// </summary>
         public int UsedActivation { get; set; }
 
         public MyProxy()
@@ -19,6 +40,11 @@ namespace AutoRefferal
 
         }
 
+        /// <summary>
+        /// Конструктор прокси
+        /// </summary>
+        /// <param name="ipAddress">Ип адрес</param>
+        /// <param name="port">Порт</param>
         public MyProxy(string ipAddress, string port)
         {
             IpAddress = ipAddress;
@@ -26,6 +52,10 @@ namespace AutoRefferal
             UsedActivation = 0;
         }
 
+        /// <summary>
+        /// Установить ключ апи
+        /// </summary>
+        /// <param name="key">Ключ апи</param>
         public void SetApi(string key)
         {
             ApiKey = key;
@@ -80,7 +110,6 @@ namespace AutoRefferal
                             proxies.Add(new MyProxy(str[0], str[1]));
                     }
                     SaveProxies(proxies);
-                    File.Delete("Proxy.txt");
                     return proxies;
                 }
             }
