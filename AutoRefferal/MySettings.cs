@@ -1,25 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace AutoRefferal
 {
+    /// <summary>
+    /// Класс описывающий настройки
+    /// </summary>
     public class MySettings
     {
+        /// <summary>
+        /// Путь к опере в система
+        /// </summary>
         public string OperaPath { get; set; }
+        /// <summary>
+        /// Апи ключ для смс сервиса
+        /// </summary>
         public string SmsApiKey { get; set; }
+        /// <summary>
+        /// Апи ключ для прокси сервиса
+        /// </summary>
         public string ProxyApiKey { get; set; }
 
-
+        /// <summary>
+        /// Конструктор класса
+        /// </summary>
         public MySettings()
         {
 
         }
 
+        /// <summary>
+        /// конструктор класса
+        /// </summary>
+        /// <param name="operaPath">Путь к опере</param>
+        /// <param name="smsApiKey">Апи смс</param>
+        /// <param name="proxyApiKey">Апи прокси</param>
         public MySettings(string operaPath, string smsApiKey, string proxyApiKey)
         {
             OperaPath = operaPath;
@@ -27,6 +43,10 @@ namespace AutoRefferal
             ProxyApiKey = proxyApiKey;
         }
 
+        /// <summary>
+        /// Загрузить настройки из файла
+        /// </summary>
+        /// <returns></returns>
         public bool LoadSettings()
         {
             try
@@ -46,6 +66,5 @@ namespace AutoRefferal
                 return false;
             }
         }
-
     }
 }
