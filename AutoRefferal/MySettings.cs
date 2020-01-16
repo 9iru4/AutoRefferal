@@ -33,7 +33,7 @@ namespace AutoRefferal
             {
                 using (StreamReader sr = new StreamReader("Settings.txt"))
                 {
-                    var all = sr.ReadLine().Split(':');
+                    var all = sr.ReadLine().Split('|');
                     OperaPath = all[0];
                     SmsApiKey = all[1];
                     ProxyApiKey = all[2];

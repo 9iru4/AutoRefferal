@@ -42,9 +42,8 @@ namespace AutoRefferal
         /// </summary>
         private void StartReg_Click(object sender, RoutedEventArgs e)
         {
-            operaWebDriver.InitializeOperaDriver();
             token = cancelTokenSource.Token;
-            Task task = new Task(() => operaWebDriver.StartAutoReg(token));
+            Task task = new Task(() => operaWebDriver.StartAutoReg(token, true));
             task.Start();
         }
 
@@ -62,6 +61,11 @@ namespace AutoRefferal
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
             cancelTokenSource.Cancel();
+        }
+
+        private void ProxiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            operaWebDriver.AddNewProxies();
         }
     }
 }

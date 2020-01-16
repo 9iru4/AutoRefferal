@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Opera;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,24 @@ namespace AutoRefferal
             options.AddArgument("user-data-dir=" + Directory.GetCurrentDirectory() + @"\opera");
             options.AddArgument("private");
             driver = new OperaDriver(options);
+        }
+
+        public void InitializeChromeWithProxy()
+        {
+            ChromeOptions options = new ChromeOptions();
+            foreach (var item in myProxies.ToList())
+            {
+                if (item.UsedActivation >= 10)
+                    myProxies.Remove(item);
+                else
+                {
+                    MyProxy.SaveProxies(myProxies);
+                    break;
+                }
+            }
+            options.AddArguments("--proxy-server=socks4://" + myProxies[0].IpAddress + ":" + myProxies[0].Port);
+            options.AddArgument("private");
+            driver = new ChromeDriver(options);
         }
 
         public void AddNewAccounts()
@@ -174,9 +193,9 @@ namespace AutoRefferal
         /// <summary>
         /// Начало работы атоматической регистрации
         /// </summary>
-        public void StartAutoReg(CancellationToken token)
+        public void StartAutoReg(CancellationToken token, bool useproxyformfile)
         {
-            phone = new PhoneNumber();
+
             try
             {
                 foreach (var item in refferals)
@@ -190,6 +209,9 @@ namespace AutoRefferal
                     {
                         for (int i = 0; item.ActivatedAccounts < 10; i++)
                         {
+                            if (useproxyformfile)
+                                InitializeChromeWithProxy();
+                            else InitializeOperaDriver();
                             if (token.IsCancellationRequested)
                             {
                                 Quit();
@@ -233,6 +255,11 @@ namespace AutoRefferal
                                                     Account.SaveAccounts(accounts);
                                                     item.ActivatedAccounts++;
                                                     Refferal.SaveRefferals(refferals);
+                                                    myProxies[0].UsedActivation++;
+                                                    var prox = myProxies[0];
+                                                    myProxies.RemoveAt(0);
+                                                    myProxies.Add(prox);
+                                                    MyProxy.SaveProxies(myProxies);
                                                 }
                                                 else
                                                 {
