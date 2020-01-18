@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Windows;
 
 namespace AutoRefferal
 {
@@ -369,6 +368,7 @@ namespace AutoRefferal
         /// </summary>
         public void StartAutoReg(CancellationToken token)
         {
+            MyMessageBox mb;
             try
             {
                 foreach (var item in refferals)
@@ -377,7 +377,7 @@ namespace AutoRefferal
 
                     if (accounts.Count == 0)
                     {
-                        MyMessageBox mb = new MyMessageBox("Аккаунты закончились.");
+                        mb = new MyMessageBox("Аккаунты закончились.");
                         mb.ShowDialog();
                         Quit();
                         break;
@@ -397,7 +397,7 @@ namespace AutoRefferal
                             if (token.IsCancellationRequested)
                             {
                                 Quit();
-                                MyMessageBox mb = new MyMessageBox("Программа остановлена по требованию пользователя.");
+                                mb = new MyMessageBox("Программа остановлена по требованию пользователя.");
                                 mb.ShowDialog();
                                 return;
                             }
@@ -474,13 +474,13 @@ namespace AutoRefferal
                         }
                     }
                 }
-                MyMessageBox mb = new MyMessageBox("Рефферальные коды закончились.");
+                mb = new MyMessageBox("Рефферальные коды закончились.");
                 mb.ShowDialog();
             }
             catch (Exception ex)
             {
                 WriteLog(ex.ToString());
-                MyMessageBox mb = new MyMessageBox("Произошло неведанное говно, программа перешла в ручной режим.");
+                mb = new MyMessageBox("Произошло неведанное говно, программа перешла в ручной режим.");
                 mb.ShowDialog();
             }
         }

@@ -78,7 +78,7 @@ namespace AutoRefferal
         {
             try
             {
-                using (StreamReader sr = new StreamReader(pathToFile))
+                using (StreamReader sr = new StreamReader(pathToFile,System.Text.Encoding.Default))
                 {
                     while (sr.Peek() >= 0)
                     {
@@ -87,7 +87,6 @@ namespace AutoRefferal
                             accounts.Add(new Account(str[0], str[1]));
                     }
                 }
-                File.Delete("Accounts.txt");
                 SaveAccounts(accounts);
                 return accounts;
             }
