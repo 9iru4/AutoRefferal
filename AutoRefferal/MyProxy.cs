@@ -89,7 +89,7 @@ namespace AutoRefferal
         {
             try
             {
-                using (StreamReader sr = new StreamReader(pathToFile))
+                using (StreamReader sr = new StreamReader(pathToFile, System.Text.Encoding.Default))
                 {
                     while (sr.Peek() >= 0)
                     {
