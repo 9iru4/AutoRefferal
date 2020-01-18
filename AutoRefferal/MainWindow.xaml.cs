@@ -152,7 +152,7 @@ namespace AutoRefferal
             if (openFileDialog.ShowDialog() == true)
             {
                 operaWebDriver.AddNewAccounts(openFileDialog.FileName);
-                LoadProxies();
+                LoadAccounts();
             }
         }
 
@@ -184,6 +184,8 @@ namespace AutoRefferal
         {
             operaWebDriver.settings = new MySettings(PathToOperaBrowser.Text, SMSApiKey.Text, "", SelectedBrowser.SelectedValue.ToString());
             operaWebDriver.settings.SaveSettings(operaWebDriver.settings);
+            MyMessageBox mb = new MyMessageBox("Настройки успешно сохранены.");
+            mb.ShowDialog();
         }
 
         /// <summary>

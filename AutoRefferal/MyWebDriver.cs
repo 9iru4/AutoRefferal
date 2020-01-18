@@ -105,7 +105,10 @@ namespace AutoRefferal
         {
             var res = Account.AddNewAccounts(accounts, pathToFile);
             if (res == null)
-                MessageBox.Show("Аккаунты не добавлены");
+            {
+                MyMessageBox mb = new MyMessageBox("Аккаунты не добавлены.");
+                mb.ShowDialog();
+            }
             else
                 accounts = res;
             Account.SaveAccounts(accounts);
@@ -118,7 +121,10 @@ namespace AutoRefferal
         {
             var res = Refferal.GetNewRefferals(refferals, pathToFile);
             if (res == null)
-                MessageBox.Show("Реферальные коды не добавлены");
+            {
+                MyMessageBox mb = new MyMessageBox("Реферальные коды не добавлены.");
+                mb.ShowDialog();
+            }
             else
                 refferals = res;
             Refferal.SaveRefferals(refferals);
@@ -131,7 +137,10 @@ namespace AutoRefferal
         {
             var res = MyProxy.GetNewProxies(myProxies, pathToFile);
             if (res == null)
-                MessageBox.Show("Прокси не добавлены");
+            {
+                MyMessageBox mb = new MyMessageBox("Прокси не добавлены.");
+                mb.ShowDialog();
+            }
             else
                 myProxies = res;
             MyProxy.SaveProxies(myProxies);
@@ -368,7 +377,8 @@ namespace AutoRefferal
 
                     if (accounts.Count == 0)
                     {
-                        MessageBox.Show("Аккаунты закончились");
+                        MyMessageBox mb = new MyMessageBox("Аккаунты закончились.");
+                        mb.ShowDialog();
                         Quit();
                         break;
                     }
@@ -387,7 +397,8 @@ namespace AutoRefferal
                             if (token.IsCancellationRequested)
                             {
                                 Quit();
-                                MessageBox.Show("Программа остановлена");
+                                MyMessageBox mb = new MyMessageBox("Программа остановлена по требованию пользователя.");
+                                mb.ShowDialog();
                                 return;
                             }
 
@@ -463,12 +474,14 @@ namespace AutoRefferal
                         }
                     }
                 }
-                MessageBox.Show("Рефферальные коды закончились");
+                MyMessageBox mb = new MyMessageBox("Рефферальные коды закончились.");
+                mb.ShowDialog();
             }
             catch (Exception ex)
             {
                 WriteLog(ex.ToString());
-                MessageBox.Show("Произошло неведанное говно, программа перешла в ручной режим.");
+                MyMessageBox mb = new MyMessageBox("Произошло неведанное говно, программа перешла в ручной режим.");
+                mb.ShowDialog();
             }
         }
 

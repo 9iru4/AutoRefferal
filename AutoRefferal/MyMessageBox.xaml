@@ -1,0 +1,15 @@
+﻿<Controls:MetroWindow x:Class="AutoRefferal.MyMessageBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        ResizeMode="NoResize"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        mc:Ignorable="d"
+        Title="ВНИМАНИЕ" Height="134.946" Width="470.732">
+    <Grid Background="#474343">
+        <Button Name="OkButton" Content="ОК" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="189,69,0,0" VerticalAlignment="Top" Width="79" Height="32" Click="OkButton_Click"/>
+        <TextBox Name="MessageText" HorizontalAlignment="Left" Height="64" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="464"/>
+
+    </Grid>
+</Controls:MetroWindow>
