@@ -44,7 +44,7 @@ namespace AutoRefferal
 
         public static void SaveAccounts(List<Account> accounts)
         {
-            using (StreamWriter sw = new StreamWriter("Accounts.dat"))
+            using (StreamWriter sw = new StreamWriter("bin/Accounts.dat"))
             {
                 sw.Write(SerializeHelper.Serialize(accounts));
             }
@@ -57,7 +57,7 @@ namespace AutoRefferal
         {
             try
             {
-                using (StreamReader sr = new StreamReader("Accounts.dat"))
+                using (StreamReader sr = new StreamReader("bin/Accounts.dat"))
                 {
                     return SerializeHelper.Desirialize<List<Account>>(sr.ReadToEnd());
                 }
@@ -72,12 +72,13 @@ namespace AutoRefferal
         /// Добавление новых аккаунтов
         /// </summary>
         /// <param name="accounts">Текущие аккаунты</param>
+        /// <param name="pathToFile">Путь к файлу</param>
         /// <returns>Список аккаунтов</returns>
-        public static List<Account> GetNewAccounts(List<Account> accounts)
+        public static List<Account> AddNewAccounts(List<Account> accounts, string pathToFile)
         {
             try
             {
-                using (StreamReader sr = new StreamReader("Accounts.txt"))
+                using (StreamReader sr = new StreamReader(pathToFile))
                 {
                     while (sr.Peek() >= 0)
                     {
@@ -102,7 +103,7 @@ namespace AutoRefferal
         /// <param name="mess">Статус</param>
         public void SaveAccountInfo(string mess)
         {
-            using (StreamWriter sw = new StreamWriter("UsedAccounts.txt", true))
+            using (StreamWriter sw = new StreamWriter("LOG/UsedAccounts.txt", true))
             {
                 sw.WriteLine(DateTime.Now.ToString() + ":" + Name + ":" + Email + ":" + mess);
             }

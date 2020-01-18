@@ -11,10 +11,6 @@ namespace AutoRefferal
     public class MyProxy
     {
         /// <summary>
-        /// Апи ключ
-        /// </summary>
-        public string ApiKey { get; set; }
-        /// <summary>
         /// Ип адрес
         /// </summary>
         public string IpAddress { get; set; }
@@ -53,21 +49,12 @@ namespace AutoRefferal
         }
 
         /// <summary>
-        /// Установить ключ апи
-        /// </summary>
-        /// <param name="key">Ключ апи</param>
-        public void SetApi(string key)
-        {
-            ApiKey = key;
-        }
-
-        /// <summary>
         /// Сохранение прокси в файл
         /// </summary>
         /// <param name="refferals">Прокси для сохранения</param>
         public static void SaveProxies(List<MyProxy> proxies)
         {
-            using (StreamWriter sw = new StreamWriter("Proxy.dat"))
+            using (StreamWriter sw = new StreamWriter("bin/Proxy.dat"))
             {
                 sw.Write(SerializeHelper.Serialize(proxies));
             }
@@ -81,7 +68,7 @@ namespace AutoRefferal
         {
             try
             {
-                using (StreamReader sr = new StreamReader("Proxy.dat"))
+                using (StreamReader sr = new StreamReader("bin/Proxy.dat"))
                 {
                     return SerializeHelper.Desirialize<List<MyProxy>>(sr.ReadToEnd());
                 }
@@ -96,12 +83,13 @@ namespace AutoRefferal
         /// Добавление новых прокси из файла
         /// </summary>
         /// <param name="refferals">Текущие прокси</param>
+        /// <param name="pathToFile">Путь к файлу</param>
         /// <returns>Новый список прокси</returns>
-        public static List<MyProxy> GetNewProxies(List<MyProxy> proxies)
+        public static List<MyProxy> GetNewProxies(List<MyProxy> proxies, string pathToFile)
         {
             try
             {
-                using (StreamReader sr = new StreamReader("Proxy.txt"))
+                using (StreamReader sr = new StreamReader(pathToFile))
                 {
                     while (sr.Peek() >= 0)
                     {

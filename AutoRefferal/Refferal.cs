@@ -44,7 +44,7 @@ namespace AutoRefferal
         /// <param name="refferals">Коды для сохранения</param>
         public static void SaveRefferals(List<Refferal> refferals)
         {
-            using (StreamWriter sw = new StreamWriter("Refferals.dat"))
+            using (StreamWriter sw = new StreamWriter("bin/Refferals.dat"))
             {
                 sw.Write(SerializeHelper.Serialize(refferals));
             }
@@ -58,7 +58,7 @@ namespace AutoRefferal
         {
             try
             {
-                using (StreamReader sr = new StreamReader("Refferals.dat"))
+                using (StreamReader sr = new StreamReader("bin/Refferals.dat"))
                 {
                     return SerializeHelper.Desirialize<List<Refferal>>(sr.ReadToEnd());
                 }
@@ -73,12 +73,13 @@ namespace AutoRefferal
         /// Добавление новых реферальных кодов в файл
         /// </summary>
         /// <param name="refferals">Текущие реферальные коды</param>
+        /// <param name="pathToFile">Путь к файлу</param>
         /// <returns>Новый список реферальных кодов</returns>
-        public static List<Refferal> GetNewRefferals(List<Refferal> refferals)
+        public static List<Refferal> GetNewRefferals(List<Refferal> refferals, string pathToFile)
         {
             try
             {
-                using (StreamReader sr = new StreamReader("Refferals.txt"))
+                using (StreamReader sr = new StreamReader(pathToFile))
                 {
                     while (sr.Peek() >= 0)
                     {

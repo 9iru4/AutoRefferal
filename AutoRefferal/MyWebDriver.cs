@@ -24,7 +24,7 @@ namespace AutoRefferal
         /// <summary>
         /// Список аккаунтов
         /// </summary>
-        List<Account> accounts { get; set; }
+        public List<Account> accounts { get; set; }
         /// <summary>
         /// Телефон
         /// </summary>
@@ -32,15 +32,15 @@ namespace AutoRefferal
         /// <summary>
         /// Список рефералов
         /// </summary>
-        List<Refferal> refferals { get; set; }
+        public List<Refferal> refferals { get; set; }
         /// <summary>
         /// Настройки
         /// </summary>
-        MySettings settings;
+        public MySettings settings;
         /// <summary>
         /// Сипсок прокси
         /// </summary>
-        List<MyProxy> myProxies { get; set; }
+        public List<MyProxy> myProxies { get; set; }
 
         /// <summary>
         /// Конструктор класса
@@ -101,37 +101,40 @@ namespace AutoRefferal
         /// <summary>
         /// Добавление новых аккаунтов из файла
         /// </summary>
-        public void AddNewAccounts()
+        public void AddNewAccounts(string pathToFile)
         {
-            var res = Account.GetNewAccounts(accounts);
+            var res = Account.AddNewAccounts(accounts, pathToFile);
             if (res == null)
                 MessageBox.Show("Аккаунты не добавлены");
             else
                 accounts = res;
+            Account.SaveAccounts(accounts);
         }
 
         /// <summary>
         /// Добавление новых рефеалов из файла
         /// </summary>
-        public void AddNewRefferals()
+        public void AddNewRefferals(string pathToFile)
         {
-            var res = Refferal.GetNewRefferals(refferals);
+            var res = Refferal.GetNewRefferals(refferals, pathToFile);
             if (res == null)
                 MessageBox.Show("Реферальные коды не добавлены");
             else
                 refferals = res;
+            Refferal.SaveRefferals(refferals);
         }
 
         /// <summary>
         /// Добавление новых прокси из файла
         /// </summary>
-        public void AddNewProxies()
+        public void AddNewProxies(string pathToFile)
         {
-            var res = MyProxy.GetNewProxies(myProxies);
+            var res = MyProxy.GetNewProxies(myProxies, pathToFile);
             if (res == null)
                 MessageBox.Show("Прокси не добавлены");
             else
                 myProxies = res;
+            MyProxy.SaveProxies(myProxies);
         }
 
         /// <summary>
@@ -355,7 +358,7 @@ namespace AutoRefferal
         /// <summary>
         /// Начало работы атоматической регистрации
         /// </summary>
-        public void StartAutoReg(CancellationToken token, bool useproxyformfile)
+        public void StartAutoReg(CancellationToken token)
         {
             try
             {
@@ -377,7 +380,7 @@ namespace AutoRefferal
                             if (accounts.Count == 0)
                                 break;
 
-                            if (useproxyformfile)
+                            if (settings.SelectedBrowser == "Chrome")
                                 InitializeChromeWithProxy();
                             else InitializeOperaDriver();
 
@@ -558,7 +561,7 @@ namespace AutoRefferal
         /// <param name="log">Текст для логирования</param>
         public void WriteLog(string log)
         {
-            using (StreamWriter sw = new StreamWriter("log.txt", true))
+            using (StreamWriter sw = new StreamWriter("LOG/log.txt", true))
             {
                 sw.WriteLine(DateTime.Now.ToString() + "   " + log);
             }

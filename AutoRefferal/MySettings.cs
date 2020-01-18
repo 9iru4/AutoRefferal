@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
-using System.Windows;
 
 namespace AutoRefferal
 {
     /// <summary>
     /// Класс описывающий настройки
     /// </summary>
+    [Serializable]
     public class MySettings
     {
         /// <summary>
@@ -21,6 +21,10 @@ namespace AutoRefferal
         /// Апи ключ для прокси сервиса
         /// </summary>
         public string ProxyApiKey { get; set; }
+        /// <summary>
+        /// Выбранный браузер
+        /// </summary>
+        public string SelectedBrowser { get; set; }
 
         /// <summary>
         /// Конструктор класса
@@ -36,34 +40,45 @@ namespace AutoRefferal
         /// <param name="operaPath">Путь к опере</param>
         /// <param name="smsApiKey">Апи смс</param>
         /// <param name="proxyApiKey">Апи прокси</param>
-        public MySettings(string operaPath, string smsApiKey, string proxyApiKey)
+        /// <param name="Browser">Браузер</param>
+        public MySettings(string operaPath, string smsApiKey, string proxyApiKey, string Browser)
         {
             OperaPath = operaPath;
             SmsApiKey = smsApiKey;
             ProxyApiKey = proxyApiKey;
+            SelectedBrowser = Browser;
         }
 
         /// <summary>
         /// Загрузить настройки из файла
         /// </summary>
         /// <returns></returns>
-        public bool LoadSettings()
+        public void LoadSettings()
         {
             try
             {
-                using (StreamReader sr = new StreamReader("Settings.txt"))
+                using (StreamReader sr = new StreamReader("bin/Settings.dat"))
                 {
-                    var all = sr.ReadLine().Split('|');
-                    OperaPath = all[0];
-                    SmsApiKey = all[1];
-                    ProxyApiKey = all[2];
-                    return true;
+                    var settings = SerializeHelper.Desirialize<MySettings>(sr.ReadToEnd());
+                    OperaPath = settings.OperaPath;
+                    SmsApiKey = settings.SmsApiKey;
+                    ProxyApiKey = settings.ProxyApiKey;
+                    SelectedBrowser = settings.SelectedBrowser;
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show("Пожалуйста укажите настройки.");
-                return false;
+            }
+        }
+
+        /// <summary>
+        /// Сохранение настроек в файл
+        /// </summary>
+        public void SaveSettings(MySettings settings)
+        {
+            using (StreamWriter sw = new StreamWriter("bin/Settings.dat"))
+            {
+                sw.Write(SerializeHelper.Serialize(settings));
             }
         }
     }
