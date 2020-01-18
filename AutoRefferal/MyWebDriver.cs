@@ -10,6 +10,8 @@ using System.Windows;
 
 namespace AutoRefferal
 {
+    public enum RegistrationState { Confirmed, NotConfirmed, NotRegistered }
+
     /// <summary>
     /// Класс описывающий взаимодейстиве с браузером
     /// </summary>
@@ -72,6 +74,7 @@ namespace AutoRefferal
             options.AddArgument("user-data-dir=" + Directory.GetCurrentDirectory() + @"\opera");
             options.AddArgument("private");
             driver = new OperaDriver(options);
+            driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(20);
         }
 
         /// <summary>
@@ -91,8 +94,8 @@ namespace AutoRefferal
                     break;
                 }
             }
-
             driver = new ChromeDriver(options);
+            driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(20);
         }
 
         /// <summary>
@@ -146,6 +149,24 @@ namespace AutoRefferal
         }
 
         /// <summary>
+        /// Проверка состояния регистрации
+        /// </summary>
+        /// <returns>Зарегистрирован, Зарегистрирован но не подтвержден, не зарегистрирован</returns>
+        public RegistrationState CheckRegistrationState()
+        {
+            if (driver.FindElements(By.ClassName("confirmed")).Count == 2)
+            {
+                return RegistrationState.Confirmed;
+            }
+            if (driver.FindElements(By.ClassName("confirmed")).Count == 1)
+            {
+                return RegistrationState.NotConfirmed;
+            }
+            else return RegistrationState.NotRegistered;
+
+        }
+
+        /// <summary>
         /// Получение кода регистрации по смс
         /// </summary>
         /// <returns>Получен ли код</returns>
@@ -176,6 +197,7 @@ namespace AutoRefferal
                         driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(item.ToString());
                         Thread.Sleep(50);
                     }
+                    Thread.Sleep(2000);
                     return true;
                 }
                 else
@@ -189,6 +211,7 @@ namespace AutoRefferal
                             driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(item.ToString());
                             Thread.Sleep(50);
                         }
+                        Thread.Sleep(2000);
                         return true;
                     }
                     else
@@ -240,135 +263,190 @@ namespace AutoRefferal
         }
 
         /// <summary>
+        /// Возможна ли регистрация в настоящее время
+        /// </summary>
+        /// <returns>данет</returns>
+        public bool IsRegistrationAvaliable()
+        {
+            if (driver.FindElement(By.ClassName("field-registrationform-first_name")).GetAttribute("innerHTML").Contains("в настоящее время регистрация невозможна"))
+            {
+                myProxies.RemoveAt(0);
+                return false;
+            }
+            else return true;
+        }
+
+        /// <summary>
+        /// Использован ли имейл
+        /// </summary>
+        /// <param name="account">Аккаунт на котором проводилась регистрация</param>
+        /// <returns></returns>
+        public bool IsEmailUsed(Account account)
+        {
+            if (driver.FindElement(By.ClassName("field-registrationform-email")).GetAttribute("innerHTML").Contains("зарегистрирова"))
+            {
+                account.SaveAccountInfo("Проблема с имейлом");
+                accounts.Remove(accounts.Where(x => x.Name == account.Name).FirstOrDefault());
+                Account.SaveAccounts(accounts);
+                return false;
+            }
+            else return true;
+        }
+
+        /// <summary>
+        /// Работает ли прокси
+        /// </summary>
+        /// <returns>данет</returns>
+        public bool IsProxyCanUsed()
+        {
+            if (driver.PageSource.Contains("error-code"))
+            {
+                myProxies.RemoveAt(0);
+                MyProxy.SaveProxies(myProxies);
+                Quit();
+                return true;
+            }
+            else return false;
+        }
+
+        /// <summary>
+        /// Регистрация подтверждена
+        /// </summary>
+        /// <param name="account">Аккаунт на котором проводилась регистрация</param>
+        /// <param name="refferal">Реферальный код на котором проводилась регистация</param>
+        public void RegisterConfirmed(Account account, Refferal refferal)
+        {
+            account.SaveAccountInfo("Зарегистрирован");
+            accounts.Remove(accounts.Where(x => x.Name == account.Name).FirstOrDefault());
+            Account.SaveAccounts(accounts);
+            refferal.ActivatedAccounts++;
+            Refferal.SaveRefferals(refferals);
+            myProxies[0].UsedActivation++;
+            var prox = myProxies[0];
+            myProxies.RemoveAt(0);
+            myProxies.Add(prox);
+            MyProxy.SaveProxies(myProxies);
+        }
+
+        /// <summary>
+        /// Регистрация завершена, но не подтверждена
+        /// </summary>
+        /// <param name="account">Аккаунт на котором проводилась регистрация</param>
+        public void RegistrationNotConfirmed(Account account)
+        {
+            account.SaveAccountInfo("Использован, но не подтвержден");
+            accounts.Remove(accounts.Where(x => x.Name == account.Name).FirstOrDefault());
+            Account.SaveAccounts(accounts);
+        }
+
+        /// <summary>
+        /// Регистрация не завершена
+        /// </summary>
+        /// <param name="account">Аккаунт на котором проводилась регистрация</param>
+        public void RegistrationNotComplited(Account account)
+        {
+            account.SaveAccountInfo("Аккаунт не зарегистирован");
+            accounts.Remove(accounts.Where(x => x.Name == account.Name).FirstOrDefault());
+            Account.SaveAccounts(accounts);
+            if (!phone.UseAgain)
+                phone.UseAgain = true;
+        }
+
+        /// <summary>
         /// Начало работы атоматической регистрации
         /// </summary>
         public void StartAutoReg(CancellationToken token, bool useproxyformfile)
         {
-            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
             try
             {
                 foreach (var item in refferals)
                 {
                     var buffAccounts = new List<Account>(accounts);
+
                     if (accounts.Count == 0)
                     {
                         MessageBox.Show("Аккаунты закончились");
+                        Quit();
+                        break;
                     }
+
                     if (buffAccounts.Count > 0 && item.ActivatedAccounts < 10)
                     {
                         for (int i = 0; item.ActivatedAccounts < 10; i++)
                         {
+                            if (accounts.Count == 0)
+                                break;
+
                             if (useproxyformfile)
                                 InitializeChromeWithProxy();
                             else InitializeOperaDriver();
+
                             if (token.IsCancellationRequested)
                             {
                                 Quit();
                                 MessageBox.Show("Программа остановлена");
                                 return;
                             }
-                            if (accounts.Count == 0)
-                                break;
-                            try
+
+                            driver.Navigate().GoToUrl("https://pgbonus.ru/register");
+
+                            if (IsProxyCanUsed())
                             {
-                                driver.Navigate().GoToUrl("https://pgbonus.ru/register");
-                            }
-                            catch (Exception)
-                            {
-                                js.ExecuteScript("window.stop()");
-                            }
-                            Thread.Sleep(3000);
-                            if (driver.PageSource.Contains("error-code"))
-                            {
-                                myProxies.RemoveAt(0);
-                                MyProxy.SaveProxies(myProxies);
                                 i--;
                                 Quit();
                                 continue;
                             }
+
                             SendName(buffAccounts[i].Name);
-                            Thread.Sleep(3000);
+
                             SendEmail(buffAccounts[i].Email);
-                            Thread.Sleep(3000);
+
                             SendRefferal(item.Code);
-                            Thread.Sleep(4000);
-                            if (!driver.FindElement(By.ClassName("field-registrationform-first_name")).GetAttribute("innerHTML").Contains("в настоящее время регистрация невозможна"))
+
+                            if (IsRegistrationAvaliable())
                             {
-                                if (!driver.FindElement(By.ClassName("field-registrationform-email")).GetAttribute("innerHTML").Contains("зарегистрирова"))
+                                if (IsEmailUsed(buffAccounts[i]))
                                 {
                                     CheckPass();
-                                    Thread.Sleep(2000);
+
                                     if (!phone.UseAgain)
                                     {
                                         GetNumberPhone();
-                                        GetCode(false);
                                     }
-                                    else
-                                    {
-                                        GetCode(phone.UseAgain);
-                                    }
-                                    Thread.Sleep(2000);
-                                    CheckAgrrement();
-                                    Thread.Sleep(3000);
-                                    if (!driver.FindElement(By.ClassName("field-registrationform-first_name")).GetAttribute("innerHTML").Contains("в настоящее время регистрация невозможна"))
-                                    {
 
-                                        try
+                                    if (!GetCode(phone.UseAgain))
+                                    {
+                                        DeclinePhone();
+                                        Quit();
+                                        continue;
+                                    }
+
+                                    if (phone.UseAgain)
+                                    {
+                                        phone.UseAgain = false;
+                                    }
+
+                                    CheckAgrrement();
+
+                                    if (IsRegistrationAvaliable())
+                                    {
+                                        SubmitReg();
+
+                                        driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
+
+                                        switch (CheckRegistrationState())
                                         {
-                                            SubmitReg();
-                                            Thread.Sleep(5000);
-                                        }
-                                        catch (Exception)
-                                        {
-                                            js.ExecuteScript("window.stop()");
-                                        }
-                                        phone.NumberConformation();
-                                        try
-                                        {
-                                            driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
-                                        }
-                                        catch (Exception)
-                                        {
-                                            js.ExecuteScript("window.stop()");
-                                        }
-                                        if (driver.FindElements(By.ClassName("confirmed")).Count == 2)
-                                        {
-                                            buffAccounts[i].SaveAccountInfo("Зарегистрирован");
-                                            accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
-                                            Account.SaveAccounts(accounts);
-                                            item.ActivatedAccounts++;
-                                            Refferal.SaveRefferals(refferals);
-                                            myProxies[0].UsedActivation++;
-                                            var prox = myProxies[0];
-                                            myProxies.RemoveAt(0);
-                                            myProxies.Add(prox);
-                                            MyProxy.SaveProxies(myProxies);
-                                        }
-                                        else
-                                        {
-                                            if (driver.PageSource.Contains("Ошибка в введенных данных"))
-                                            {
-                                                buffAccounts[i].SaveAccountInfo("Обосран");
-                                                accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
-                                                Account.SaveAccounts(accounts);
-                                                if (!phone.UseAgain)
-                                                    phone.UseAgain = true;
-                                                i--;
-                                            }
-                                            if (driver.FindElements(By.ClassName("confirmed")).Count == 1)
-                                            {
-                                                buffAccounts[i].SaveAccountInfo("Использован, но не подтвержден");
-                                                accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
-                                                Account.SaveAccounts(accounts);
-                                            }
-                                            else
-                                            {
-                                                buffAccounts[i].SaveAccountInfo("Бабки просраны");
-                                                Account.SaveAccounts(accounts);
-                                                if (!phone.UseAgain)
-                                                    phone.UseAgain = true;
-                                                i--;
-                                            }
+                                            case RegistrationState.Confirmed:
+                                                RegisterConfirmed(buffAccounts[i], item);
+                                                phone.NumberConformation();
+                                                break;
+                                            case RegistrationState.NotConfirmed:
+                                                RegistrationNotConfirmed(buffAccounts[i]);
+                                                phone.NumberConformation();
+                                                break;
+                                            case RegistrationState.NotRegistered:
+                                                RegistrationNotComplited(buffAccounts[i]);
+                                                break;
                                         }
                                     }
                                     else
@@ -377,20 +455,8 @@ namespace AutoRefferal
                                         i--;
                                     }
                                 }
-                                else
-                                {
-                                    accounts[i].SaveAccountInfo("Проблема с имейлом");
-                                    accounts.Remove(accounts.Where(x => x.Name == buffAccounts[i].Name).FirstOrDefault());
-                                    Account.SaveAccounts(accounts);
-                                }
-                            }
-                            else
-                            {
-                                myProxies.RemoveAt(0);
-                                i--;
                             }
                             driver.Quit();
-                            Thread.Sleep(1000);
                         }
                     }
                 }
@@ -423,6 +489,7 @@ namespace AutoRefferal
         public void SubmitReg()
         {
             driver.FindElement(By.ClassName("submit")).Click();
+            Thread.Sleep(3000);
         }
 
         /// <summary>
@@ -436,6 +503,7 @@ namespace AutoRefferal
                 driver.FindElement(By.Name("RegistrationForm[first_name]")).SendKeys(item.ToString());
                 Thread.Sleep(50);
             }
+            Thread.Sleep(3000);
 
         }
 
@@ -450,6 +518,7 @@ namespace AutoRefferal
                 driver.FindElement(By.Name("RegistrationForm[email]")).SendKeys(item.ToString());
                 Thread.Sleep(50);
             }
+            Thread.Sleep(3000);
         }
 
         /// <summary>
@@ -463,6 +532,7 @@ namespace AutoRefferal
                 driver.FindElement(By.Name("RegistrationForm[rcode]")).SendKeys(item.ToString());
                 Thread.Sleep(50);
             }
+            Thread.Sleep(3000);
         }
 
         /// <summary>
@@ -471,6 +541,7 @@ namespace AutoRefferal
         public void CheckPass()
         {
             driver.FindElement(By.XPath("//*[@id=\"random_pass\"]")).Click();
+            Thread.Sleep(2000);
         }
 
         /// <summary>
