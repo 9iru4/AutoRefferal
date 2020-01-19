@@ -44,7 +44,7 @@ namespace AutoRefferal
 
         public static void SaveAccounts(List<Account> accounts)
         {
-            using (StreamWriter sw = new StreamWriter("bin/Accounts.dat", false, System.Text.Encoding.Unicode))
+            using (StreamWriter sw = new StreamWriter("bin/Accounts.dat", false, System.Text.Encoding.Default))
             {
                 sw.Write(SerializeHelper.Serialize(accounts));
             }
