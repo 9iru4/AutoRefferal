@@ -453,6 +453,7 @@ namespace AutoRefferal
                                     {
                                         DeclinePhone();
                                         Quit();
+                                        i--;
                                         continue;
                                     }
 
