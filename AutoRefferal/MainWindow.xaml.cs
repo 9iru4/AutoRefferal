@@ -23,6 +23,11 @@ namespace AutoRefferal
             InitializeComponent();
             operaWebDriver.InitializeWebDriver();
             SetSettings();
+            LoadAll();
+        }
+
+        public void LoadAll()
+        {
             LoadRefferals();
             LoadProxies();
             LoadAccounts();
@@ -71,7 +76,7 @@ namespace AutoRefferal
         private void StartRegButton_Click(object sender, RoutedEventArgs e)
         {
             token = cancelTokenSource.Token;
-            Task task = new Task(() => operaWebDriver.StartAutoReg(token));
+            Task task = new Task(() => { operaWebDriver.StartAutoReg(token); LoadAll(); });
             task.Start();
         }
 

@@ -188,12 +188,32 @@ namespace AutoRefferal
                 Thread.Sleep(50);
             }
             Thread.Sleep(1000);
-            driver.FindElement(By.Id("phone_code-button")).Click();
-            Thread.Sleep(3000);
             try
             {
+                driver.FindElement(By.Id("phone_code-button")).Click();
+                Thread.Sleep(3000);
                 driver.SwitchTo().Alert().Accept();
                 Thread.Sleep(1000);
+            }
+            catch (Exception e)
+            {
+                WriteLog(e.ToString());
+                try
+                {
+                    driver.FindElement(By.Id("phone_code-button")).Click();
+                    Thread.Sleep(3000);
+                    driver.SwitchTo().Alert().Accept();
+                    Thread.Sleep(1000);
+                }
+                catch (Exception)
+                {
+                    throw new Exception("Не нажимается кнопка получить код");
+                }
+            }
+
+            try
+            {
+
                 if (isRetry)
                     phone.RetryCode();
                 else
@@ -230,8 +250,9 @@ namespace AutoRefferal
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                WriteLog(ex.ToString());
                 phone.GetCode();
                 if (phone.StatusCode.Contains("STATUS_OK"))
                 {
@@ -447,19 +468,13 @@ namespace AutoRefferal
 
                                     if (IsRegistrationAvaliable())
                                     {
-                                        
-                                        try
-                                        {
-                                            SubmitReg();
-                                        }
-                                        catch (Exception)
-                                        {
-                                            Thread.Sleep(1000);
-                                        }
-                                        
+
+                                        SubmitReg();
+
                                         try
                                         {
                                             driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
+                                            Thread.Sleep(3000);
                                         }
                                         catch (Exception)
                                         {
@@ -520,8 +535,14 @@ namespace AutoRefferal
         /// </summary>
         public void SubmitReg()
         {
-            driver.FindElement(By.ClassName("submit")).Click();
-            Thread.Sleep(5000);
+            try
+            {
+                driver.FindElement(By.ClassName("submit")).Click();
+                Thread.Sleep(10000);
+            }
+            catch (Exception e)
+            {
+            }
         }
 
         /// <summary>
