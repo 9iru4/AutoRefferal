@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace AutoRefferal
 {
@@ -44,7 +45,7 @@ namespace AutoRefferal
 
         public static void SaveAccounts(List<Account> accounts)
         {
-            using (StreamWriter sw = new StreamWriter("bin/Accounts.dat", false, System.Text.Encoding.Default))
+            using (StreamWriter sw = new StreamWriter("bin/Accounts.dat", false, Encoding.Unicode))
             {
                 sw.Write(SerializeHelper.Serialize(accounts));
             }

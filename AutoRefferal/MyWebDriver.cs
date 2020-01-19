@@ -166,13 +166,19 @@ namespace AutoRefferal
         {
             if (driver.FindElements(By.ClassName("confirmed")).Count == 2)
             {
+                WriteLog(accounts[0].Email + ":" + "2");
                 return RegistrationState.Confirmed;
             }
             if (driver.FindElements(By.ClassName("confirmed")).Count == 1)
             {
+                WriteLog(accounts[0].Email + ":" + "1");
                 return RegistrationState.NotConfirmed;
             }
-            else return RegistrationState.NotRegistered;
+            else
+            {
+                WriteLog(accounts[0].Email + ":" + "0");
+                return RegistrationState.NotRegistered;
+            }
 
         }
 
@@ -423,8 +429,9 @@ namespace AutoRefferal
                             {
                                 driver.Navigate().GoToUrl("https://pgbonus.ru/register");
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
+                                WriteLog(ex.ToString());
                                 Thread.Sleep(1000);
                             }
 
@@ -476,8 +483,9 @@ namespace AutoRefferal
                                             driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
                                             Thread.Sleep(3000);
                                         }
-                                        catch (Exception)
+                                        catch (Exception ex)
                                         {
+                                            WriteLog(ex.ToString());
                                             Thread.Sleep(1000);
                                         }
 
@@ -495,6 +503,7 @@ namespace AutoRefferal
                                                 RegistrationNotComplited(buffAccounts[i]);
                                                 break;
                                         }
+                                        Thread.Sleep(2000);
                                     }
                                     else
                                     {
@@ -503,7 +512,7 @@ namespace AutoRefferal
                                     }
                                 }
                             }
-                            driver.Quit();
+                            Quit();
                         }
                     }
                 }
