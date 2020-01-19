@@ -204,17 +204,8 @@ namespace AutoRefferal
             catch (Exception e)
             {
                 WriteLog(e.ToString());
-                try
-                {
-                    driver.FindElement(By.Id("phone_code-button")).Click();
-                    Thread.Sleep(3000);
-                    driver.SwitchTo().Alert().Accept();
-                    Thread.Sleep(1000);
-                }
-                catch (Exception)
-                {
-                    throw new Exception("Не нажимается кнопка получить код");
-                }
+                phone.UseAgain = true;
+                return false;
             }
 
             try

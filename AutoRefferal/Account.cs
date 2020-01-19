@@ -58,7 +58,7 @@ namespace AutoRefferal
         {
             try
             {
-                using (StreamReader sr = new StreamReader("bin/Accounts.dat"))
+                using (StreamReader sr = new StreamReader("bin/Accounts.dat", Encoding.Unicode))
                 {
                     return SerializeHelper.Desirialize<List<Account>>(sr.ReadToEnd());
                 }
@@ -79,7 +79,7 @@ namespace AutoRefferal
         {
             try
             {
-                using (StreamReader sr = new StreamReader(pathToFile, System.Text.Encoding.Default))
+                using (StreamReader sr = new StreamReader(pathToFile, Encoding.Default))
                 {
                     while (sr.Peek() >= 0)
                     {
