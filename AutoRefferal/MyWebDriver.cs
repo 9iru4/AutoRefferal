@@ -204,7 +204,6 @@ namespace AutoRefferal
             catch (Exception e)
             {
                 WriteLog(e.ToString());
-                phone.UseAgain = true;
                 return false;
             }
 
