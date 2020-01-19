@@ -184,8 +184,7 @@ namespace AutoRefferal
         {
             operaWebDriver.settings = new MySettings(PathToOperaBrowser.Text, SMSApiKey.Text, "", SelectedBrowser.SelectedValue.ToString());
             operaWebDriver.settings.SaveSettings(operaWebDriver.settings);
-            MyMessageBox mb = new MyMessageBox("Настройки успешно сохранены.");
-            mb.ShowDialog();
+            MessageBox.Show("Настройки успешно сохранены.");
         }
 
         /// <summary>

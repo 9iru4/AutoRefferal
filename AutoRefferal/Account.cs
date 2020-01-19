@@ -78,7 +78,7 @@ namespace AutoRefferal
         {
             try
             {
-                using (StreamReader sr = new StreamReader(pathToFile,System.Text.Encoding.Default))
+                using (StreamReader sr = new StreamReader(pathToFile,System.Text.Encoding.UTF8))
                 {
                     while (sr.Peek() >= 0)
                     {

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace AutoRefferal
 {
@@ -105,8 +107,7 @@ namespace AutoRefferal
             var res = Account.AddNewAccounts(accounts, pathToFile);
             if (res == null)
             {
-                MyMessageBox mb = new MyMessageBox("Аккаунты не добавлены.");
-                mb.ShowDialog();
+                MessageBox.Show("Аккаунты не добавлены.");
             }
             else
                 accounts = res;
@@ -121,8 +122,7 @@ namespace AutoRefferal
             var res = Refferal.GetNewRefferals(refferals, pathToFile);
             if (res == null)
             {
-                MyMessageBox mb = new MyMessageBox("Реферальные коды не добавлены.");
-                mb.ShowDialog();
+                MessageBox.Show("Реферальные коды не добавлены.");
             }
             else
                 refferals = res;
@@ -137,8 +137,7 @@ namespace AutoRefferal
             var res = MyProxy.GetNewProxies(myProxies, pathToFile);
             if (res == null)
             {
-                MyMessageBox mb = new MyMessageBox("Прокси не добавлены.");
-                mb.ShowDialog();
+                MessageBox.Show("Прокси не добавлены.");
             }
             else
                 myProxies = res;
@@ -368,7 +367,6 @@ namespace AutoRefferal
         /// </summary>
         public void StartAutoReg(CancellationToken token)
         {
-            MyMessageBox mb;
             try
             {
                 foreach (var item in refferals)
@@ -377,8 +375,7 @@ namespace AutoRefferal
 
                     if (accounts.Count == 0)
                     {
-                        mb = new MyMessageBox("Аккаунты закончились.");
-                        mb.ShowDialog();
+                        MessageBox.Show("Аккаунты закончились.");
                         Quit();
                         break;
                     }
@@ -397,12 +394,18 @@ namespace AutoRefferal
                             if (token.IsCancellationRequested)
                             {
                                 Quit();
-                                mb = new MyMessageBox("Программа остановлена по требованию пользователя.");
-                                mb.ShowDialog();
+                                MessageBox.Show("Программа остановлена по требованию пользователя.");
                                 return;
                             }
 
-                            driver.Navigate().GoToUrl("https://pgbonus.ru/register");
+                            try
+                            {
+                                driver.Navigate().GoToUrl("https://pgbonus.ru/register");
+                            }
+                            catch (Exception)
+                            {
+                                Thread.Sleep(1000);
+                            }
 
                             if (IsProxyCanUsed())
                             {
@@ -444,9 +447,24 @@ namespace AutoRefferal
 
                                     if (IsRegistrationAvaliable())
                                     {
-                                        SubmitReg();
-
-                                        driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
+                                        
+                                        try
+                                        {
+                                            SubmitReg();
+                                        }
+                                        catch (Exception)
+                                        {
+                                            Thread.Sleep(1000);
+                                        }
+                                        
+                                        try
+                                        {
+                                            driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
+                                        }
+                                        catch (Exception)
+                                        {
+                                            Thread.Sleep(1000);
+                                        }
 
                                         switch (CheckRegistrationState())
                                         {
@@ -474,14 +492,12 @@ namespace AutoRefferal
                         }
                     }
                 }
-                mb = new MyMessageBox("Рефферальные коды закончились.");
-                mb.ShowDialog();
             }
             catch (Exception ex)
             {
+                Quit();
                 WriteLog(ex.ToString());
-                mb = new MyMessageBox("Произошло неведанное говно, программа перешла в ручной режим.");
-                mb.ShowDialog();
+                MessageBox.Show("Произошло неведанное говно, программа перешла в ручной режим.");
             }
         }
 
@@ -505,7 +521,7 @@ namespace AutoRefferal
         public void SubmitReg()
         {
             driver.FindElement(By.ClassName("submit")).Click();
-            Thread.Sleep(3000);
+            Thread.Sleep(5000);
         }
 
         /// <summary>
