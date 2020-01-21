@@ -96,7 +96,7 @@ namespace AutoRefferal
                 }
             }
             driver = new ChromeDriver(options);
-            driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(20);
+            driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(40);
         }
 
         /// <summary>
