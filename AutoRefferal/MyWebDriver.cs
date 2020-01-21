@@ -326,14 +326,22 @@ namespace AutoRefferal
         /// <returns>данет</returns>
         public bool IsProxyCanUsed()
         {
-            if (driver.PageSource.Contains("error-code"))
+            try
             {
-                myProxies.RemoveAt(0);
-                MyProxy.SaveProxies(myProxies);
-                Quit();
-                return true;
+                if (driver.PageSource.Contains("error-code"))
+                {
+                    myProxies.RemoveAt(0);
+                    MyProxy.SaveProxies(myProxies);
+                    Quit();
+                    return true;
+                }
+                else return false;
             }
-            else return false;
+            catch (Exception)
+            {
+                return false;
+            }
+
         }
 
         /// <summary>
