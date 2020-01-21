@@ -356,11 +356,14 @@ namespace AutoRefferal
             Account.SaveAccounts(accounts);
             refferal.ActivatedAccounts++;
             Refferal.SaveRefferals(refferals);
-            myProxies[0].UsedActivation++;
-            var prox = myProxies[0];
-            myProxies.RemoveAt(0);
-            myProxies.Add(prox);
-            MyProxy.SaveProxies(myProxies);
+            if (settings.SelectedBrowser == "Chrome")
+            {
+                myProxies[0].UsedActivation++;
+                var prox = myProxies[0];
+                myProxies.RemoveAt(0);
+                myProxies.Add(prox);
+                MyProxy.SaveProxies(myProxies);
+            }
         }
 
         /// <summary>
@@ -433,7 +436,7 @@ namespace AutoRefferal
                                 Thread.Sleep(1000);
                             }
 
-                            if (IsProxyCanUsed())
+                            if (IsProxyCanUsed() && settings.SelectedBrowser == "Chrome")
                             {
                                 i--;
                                 Quit();
@@ -462,12 +465,8 @@ namespace AutoRefferal
                                         DeclinePhone();
                                         Quit();
                                         i--;
-                                        continue;
-                                    }
-
-                                    if (phone.UseAgain)
-                                    {
                                         phone.UseAgain = false;
+                                        continue;
                                     }
 
                                     CheckAgrrement();
