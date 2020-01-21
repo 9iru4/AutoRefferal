@@ -75,7 +75,7 @@ namespace AutoRefferal
             options.AddArgument("user-data-dir=" + Directory.GetCurrentDirectory() + @"\opera");
             options.AddArgument("private");
             driver = new OperaDriver(options);
-            driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(20);
+            driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(40);
         }
 
         /// <summary>
