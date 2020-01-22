@@ -298,7 +298,8 @@ namespace AutoRefferal
         {
             if (driver.FindElement(By.ClassName("field-registrationform-first_name")).GetAttribute("innerHTML").Contains("в настоящее время регистрация невозможна"))
             {
-                myProxies.RemoveAt(0);
+                myProxies[0].UsedActivation = 3;
+                MyProxy.SaveProxies(myProxies);
                 return false;
             }
             else return true;
@@ -331,7 +332,7 @@ namespace AutoRefferal
             {
                 if (driver.PageSource.Contains("error-code"))
                 {
-                    myProxies.RemoveAt(0);
+                    myProxies[0].UsedActivation = 3;
                     MyProxy.SaveProxies(myProxies);
                     Quit();
                     return true;
