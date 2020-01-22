@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace AutoRefferal
@@ -195,13 +194,13 @@ namespace AutoRefferal
             foreach (var item in phone.Number)
             {
                 driver.FindElement(By.Name("RegistrationForm[phone]")).SendKeys(item.ToString());
-                Thread.Sleep(50);
+                Thread.Sleep(30);
             }
             Thread.Sleep(1000);
             try
             {
                 driver.FindElement(By.Id("phone_code-button")).Click();
-                Thread.Sleep(3000);
+                Thread.Sleep(1000);
                 driver.SwitchTo().Alert().Accept();
                 Thread.Sleep(1000);
             }
@@ -225,9 +224,9 @@ namespace AutoRefferal
                     foreach (var item in phone.Code)
                     {
                         driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(item.ToString());
-                        Thread.Sleep(50);
+                        Thread.Sleep(30);
                     }
-                    Thread.Sleep(2000);
+                    Thread.Sleep(1000);
                     return true;
                 }
                 else
@@ -239,9 +238,9 @@ namespace AutoRefferal
                         foreach (var item in phone.Code)
                         {
                             driver.FindElement(By.Name("RegistrationForm[sms]")).SendKeys(item.ToString());
-                            Thread.Sleep(50);
+                            Thread.Sleep(30);
                         }
-                        Thread.Sleep(2000);
+                        Thread.Sleep(1000);
                         return true;
                     }
                     else
@@ -489,7 +488,7 @@ namespace AutoRefferal
                                         catch (Exception ex)
                                         {
                                             WriteLog(ex.ToString());
-                                            Thread.Sleep(1000);
+                                            throw new Exception("Аккаунт не подтвержден");
                                         }
 
                                         switch (CheckRegistrationState())
@@ -550,10 +549,11 @@ namespace AutoRefferal
             try
             {
                 driver.FindElement(By.ClassName("submit")).Click();
-                Thread.Sleep(10000);
+                Thread.Sleep(2000);
             }
             catch (Exception e)
             {
+                WriteLog(e.ToString());
             }
         }
 
@@ -566,9 +566,9 @@ namespace AutoRefferal
             foreach (var item in Name)
             {
                 driver.FindElement(By.Name("RegistrationForm[first_name]")).SendKeys(item.ToString());
-                Thread.Sleep(50);
+                Thread.Sleep(30);
             }
-            Thread.Sleep(3000);
+            Thread.Sleep(1000);
 
         }
 
@@ -581,9 +581,9 @@ namespace AutoRefferal
             foreach (var item in Email)
             {
                 driver.FindElement(By.Name("RegistrationForm[email]")).SendKeys(item.ToString());
-                Thread.Sleep(50);
+                Thread.Sleep(30);
             }
-            Thread.Sleep(3000);
+            Thread.Sleep(1000);
         }
 
         /// <summary>
@@ -595,9 +595,9 @@ namespace AutoRefferal
             foreach (var item in refferal)
             {
                 driver.FindElement(By.Name("RegistrationForm[rcode]")).SendKeys(item.ToString());
-                Thread.Sleep(50);
+                Thread.Sleep(30);
             }
-            Thread.Sleep(3000);
+            Thread.Sleep(1000);
         }
 
         /// <summary>
@@ -606,7 +606,7 @@ namespace AutoRefferal
         public void CheckPass()
         {
             driver.FindElement(By.XPath("//*[@id=\"random_pass\"]")).Click();
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
         }
 
         /// <summary>
@@ -615,6 +615,7 @@ namespace AutoRefferal
         public void CheckAgrrement()
         {
             driver.FindElement(By.XPath("//*[@id=\"registrationform-aggr\"]")).Click();
+            Thread.Sleep(1000);
         }
 
         /// <summary>
