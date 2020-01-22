@@ -43,6 +43,8 @@ namespace AutoRefferal
         /// </summary>
         public List<MyProxy> myProxies { get; set; }
 
+        MyProxy currentProxy;
+
         /// <summary>
         /// Конструктор класса
         /// </summary>
@@ -90,12 +92,13 @@ namespace AutoRefferal
                     continue;
                 else
                 {
+                    currentProxy = new MyProxy(item.IpAddress, item.Port);
                     options.AddArguments("--proxy-server=socks4://" + item.IpAddress + ":" + item.Port);
                     break;
                 }
             }
             options.AddArgument("--incognito");
-            options.AddArgument("--user-data-dir=" + Directory.GetCurrentDirectory()+@"\Chrome");
+            options.AddArgument("--user-data-dir=" + Directory.GetCurrentDirectory() + @"\Chrome");
             driver = new ChromeDriver(options);
             driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(40);
         }
@@ -298,7 +301,7 @@ namespace AutoRefferal
         {
             if (driver.FindElement(By.ClassName("field-registrationform-first_name")).GetAttribute("innerHTML").Contains("в настоящее время регистрация невозможна"))
             {
-                myProxies[0].UsedActivation = 3;
+                myProxies.Where(x => x.IpAddress == currentProxy.IpAddress).FirstOrDefault().UsedActivation = 3;
                 MyProxy.SaveProxies(myProxies);
                 return false;
             }
@@ -332,7 +335,7 @@ namespace AutoRefferal
             {
                 if (driver.PageSource.Contains("error-code"))
                 {
-                    myProxies[0].UsedActivation = 3;
+                    myProxies.Where(x => x.IpAddress == currentProxy.IpAddress).FirstOrDefault().UsedActivation = 3;
                     MyProxy.SaveProxies(myProxies);
                     Quit();
                     return true;
@@ -360,10 +363,10 @@ namespace AutoRefferal
             Refferal.SaveRefferals(refferals);
             if (settings.SelectedBrowser == "Chrome")
             {
-                myProxies[0].UsedActivation++;
-                var prox = myProxies[0];
-                myProxies.RemoveAt(0);
-                myProxies.Add(prox);
+                var prx = myProxies.Where(x => x.IpAddress == currentProxy.IpAddress).FirstOrDefault();
+                prx.UsedActivation++;
+                myProxies.Remove(myProxies.Where(x => x.IpAddress == prx.IpAddress).FirstOrDefault());
+                myProxies.Add(prx);
                 MyProxy.SaveProxies(myProxies);
             }
         }
