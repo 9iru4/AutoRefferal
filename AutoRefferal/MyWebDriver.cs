@@ -95,7 +95,7 @@ namespace AutoRefferal
                 }
             }
             options.AddArgument("--incognito");
-            options.AddArgument("--user-data-dir=" + Directory.GetCurrentDirectory());
+            options.AddArgument("--user-data-dir=" + Directory.GetCurrentDirectory()+@"\Chrome");
             driver = new ChromeDriver(options);
             driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(40);
         }
