@@ -91,10 +91,11 @@ namespace AutoRefferal
                 else
                 {
                     options.AddArguments("--proxy-server=socks4://" + item.IpAddress + ":" + item.Port);
-                    options.AddArgument("private");
                     break;
                 }
             }
+            options.AddArgument("--incognito");
+            options.AddArgument("--user-data-dir=" + Directory.GetCurrentDirectory());
             driver = new ChromeDriver(options);
             driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(40);
         }
@@ -519,7 +520,7 @@ namespace AutoRefferal
             {
                 Quit();
                 WriteLog(ex.ToString());
-                MessageBox.Show("Произошло неведанное говно, программа перешла в ручной режим.");
+                MessageBox.Show("Произошло неведанное говно, программа остановленна.");
             }
         }
 
