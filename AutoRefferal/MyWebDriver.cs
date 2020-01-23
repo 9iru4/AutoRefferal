@@ -317,7 +317,7 @@ namespace AutoRefferal
             if (driver.FindElement(By.ClassName("field-registrationform-email")).GetAttribute("innerHTML").Contains("зарегистрирова"))
             {
                 account.SaveAccountInfo("Проблема с имейлом");
-                accounts.Remove(accounts.Where(x => x.Name == account.Name).FirstOrDefault());
+                accounts.Remove(accounts.Where(x => x.Email == account.Email).FirstOrDefault());
                 Account.SaveAccounts(accounts);
                 return false;
             }
@@ -356,7 +356,7 @@ namespace AutoRefferal
         public void RegisterConfirmed(Account account, Refferal refferal)
         {
             account.SaveAccountInfo("Зарегистрирован");
-            accounts.Remove(accounts.Where(x => x.Name == account.Name).FirstOrDefault());
+            accounts.Remove(accounts.Where(x => x.Email == account.Email).FirstOrDefault());
             Account.SaveAccounts(accounts);
             refferal.ActivatedAccounts++;
             Refferal.SaveRefferals(refferals);
@@ -377,7 +377,7 @@ namespace AutoRefferal
         public void RegistrationNotConfirmed(Account account)
         {
             account.SaveAccountInfo("Использован, но не подтвержден");
-            accounts.Remove(accounts.Where(x => x.Name == account.Name).FirstOrDefault());
+            accounts.Remove(accounts.Where(x => x.Email == account.Email).FirstOrDefault());
             Account.SaveAccounts(accounts);
         }
 
@@ -388,7 +388,7 @@ namespace AutoRefferal
         public void RegistrationNotComplited(Account account)
         {
             account.SaveAccountInfo("Аккаунт не зарегистирован");
-            accounts.Remove(accounts.Where(x => x.Name == account.Name).FirstOrDefault());
+            accounts.Remove(accounts.Where(x => x.Email == account.Email).FirstOrDefault());
             Account.SaveAccounts(accounts);
             if (!phone.UseAgain)
                 phone.UseAgain = true;
