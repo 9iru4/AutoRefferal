@@ -446,12 +446,53 @@ namespace AutoRefferal
                                 Quit();
                                 continue;
                             }
+                            try
+                            {
+                                SendName(buffAccounts[i].Name);
+                            }
+                            catch (Exception ex)
+                            {
+                                WriteLog(ex.ToString());
+                                i--;
+                                Quit();
+                                continue;
+                            }
 
-                            SendName(buffAccounts[i].Name);
+                            try
+                            {
+                                SendName(buffAccounts[i].Name);
+                            }
+                            catch (Exception ex)
+                            {
+                                WriteLog(ex.ToString());
+                                i--;
+                                Quit();
+                                continue;
+                            }
 
-                            SendEmail(buffAccounts[i].Email);
+                            try
+                            {
+                                SendEmail(buffAccounts[i].Email);
+                            }
+                            catch (Exception ex)
+                            {
+                                WriteLog(ex.ToString());
+                                i--;
+                                Quit();
+                                continue;
+                            }
 
-                            SendRefferal(item.Code);
+                            try
+                            {
+                                SendRefferal(item.Code);
+                            }
+                            catch (Exception ex)
+                            {
+                                WriteLog(ex.ToString());
+                                i--;
+                                Quit();
+                                continue;
+                            }
 
                             if (IsRegistrationAvaliable())
                             {
