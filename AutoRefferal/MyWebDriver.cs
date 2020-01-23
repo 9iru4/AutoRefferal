@@ -488,7 +488,6 @@ namespace AutoRefferal
                                         catch (Exception ex)
                                         {
                                             WriteLog(ex.ToString());
-                                            throw new Exception("Аккаунт не подтвержден");
                                         }
 
                                         switch (CheckRegistrationState())
