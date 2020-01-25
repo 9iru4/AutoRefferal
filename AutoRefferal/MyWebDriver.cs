@@ -220,7 +220,6 @@ namespace AutoRefferal
 
             try
             {
-
                 if (isRetry)
                     phone.RetryCode();
                 else
@@ -398,8 +397,8 @@ namespace AutoRefferal
             account.SaveAccountInfo("Аккаунт не зарегистирован");
             accounts.Remove(accounts.Where(x => x.Email == account.Email).FirstOrDefault());
             Account.SaveAccounts(accounts);
-            if (!phone.UseAgain)
-                phone.UseAgain = true;
+            //if (!phone.UseAgain)
+            //  phone.UseAgain = true;
         }
 
         /// <summary>
@@ -494,12 +493,12 @@ namespace AutoRefferal
                                 {
                                     CheckPass();
 
-                                    if (!phone.UseAgain)
-                                    {
-                                        GetNumberPhone();
-                                    }
+                                    //if (!phone.UseAgain)
+                                    //{
+                                    GetNumberPhone();
+                                    //}
 
-                                    if (!GetCode(phone.UseAgain))
+                                    if (!GetCode(false))
                                     {
                                         DeclinePhone();
                                         Quit();
