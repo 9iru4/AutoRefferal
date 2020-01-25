@@ -28,7 +28,7 @@ namespace AutoRefferal
         /// <summary>
         /// Телефон
         /// </summary>
-        PhoneNumber phone { get; set; }
+        public PhoneNumber phone { get; set; }
         /// <summary>
         /// Список рефералов
         /// </summary>
@@ -64,6 +64,11 @@ namespace AutoRefferal
             settings.LoadSettings();
             phone = new PhoneNumber();
             phone.SetApiKey(settings.SmsApiKey);
+        }
+
+        public void SetApiKey()
+        {
+            phone.ApiKey = settings.SmsApiKey;
         }
 
         /// <summary>
@@ -545,6 +550,7 @@ namespace AutoRefferal
                             Quit();
                         }
                     }
+                    else MessageBox.Show("Рефералы закончились");
                 }
             }
             catch (Exception ex)

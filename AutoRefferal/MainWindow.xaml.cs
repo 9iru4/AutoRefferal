@@ -38,8 +38,12 @@ namespace AutoRefferal
         /// </summary>
         public void LoadRefferals()
         {
-            RefferalsDataGrid.ItemsSource = null;
-            RefferalsDataGrid.ItemsSource = operaWebDriver.refferals;
+            Dispatcher.Invoke(
+                () =>
+                {
+                    RefferalsDataGrid.ItemsSource = null;
+                    RefferalsDataGrid.ItemsSource = operaWebDriver.refferals;
+                });
         }
 
         /// <summary>
@@ -47,8 +51,12 @@ namespace AutoRefferal
         /// </summary>
         public void LoadProxies()
         {
-            ProxiesDataGrid.ItemsSource = null;
-            ProxiesDataGrid.ItemsSource = operaWebDriver.myProxies;
+            Dispatcher.Invoke(
+                () =>
+                {
+                    ProxiesDataGrid.ItemsSource = null;
+                    ProxiesDataGrid.ItemsSource = operaWebDriver.myProxies;
+                });
         }
 
         /// <summary>
@@ -56,8 +64,12 @@ namespace AutoRefferal
         /// </summary>
         public void LoadAccounts()
         {
-            AccountsDataGrid.ItemsSource = null;
-            AccountsDataGrid.ItemsSource = operaWebDriver.accounts;
+            Dispatcher.Invoke(
+                   () =>
+                   {
+                       AccountsDataGrid.ItemsSource = null;
+                       AccountsDataGrid.ItemsSource = operaWebDriver.accounts;
+                   });
         }
 
         /// <summary>
@@ -189,6 +201,7 @@ namespace AutoRefferal
         {
             operaWebDriver.settings = new MySettings(PathToOperaBrowser.Text, SMSApiKey.Text, "", SelectedBrowser.SelectedValue.ToString());
             operaWebDriver.settings.SaveSettings(operaWebDriver.settings);
+            operaWebDriver.SetApiKey();
             MessageBox.Show("Настройки успешно сохранены.");
         }
 
