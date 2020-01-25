@@ -460,18 +460,6 @@ namespace AutoRefferal
 
                             try
                             {
-                                SendName(buffAccounts[i].Name);
-                            }
-                            catch (Exception ex)
-                            {
-                                WriteLog(ex.ToString());
-                                i--;
-                                Quit();
-                                continue;
-                            }
-
-                            try
-                            {
                                 SendEmail(buffAccounts[i].Email);
                             }
                             catch (Exception ex)
