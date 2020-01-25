@@ -66,6 +66,9 @@ namespace AutoRefferal
             phone.SetApiKey(settings.SmsApiKey);
         }
 
+        /// <summary>
+        /// Установить ключ апи для смс сервиса
+        /// </summary>
         public void SetApiKey()
         {
             phone.ApiKey = settings.SmsApiKey;
