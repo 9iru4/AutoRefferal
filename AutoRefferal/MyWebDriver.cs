@@ -562,20 +562,6 @@ namespace AutoRefferal
         }
 
         /// <summary>
-        /// Событие закрития окна
-        /// </summary>
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            try
-            {
-                driver.Quit();
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        /// <summary>
         /// Нажатие элемента подтвердить
         /// </summary>
         public void SubmitReg()
