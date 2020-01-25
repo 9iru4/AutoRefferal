@@ -1,28 +1,52 @@
 ﻿using MahApps.Metro.Controls;
+using System;
+using System.Windows;
 
 namespace AutoRefferal
 {
     /// <summary>
     /// Логика взаимодействия для MyMessageBox.xaml
     /// </summary>
-    public partial class MyMessageBox : MetroWindow
+    public partial class MyMessageBox : MetroWindow, IDisposable
     {
         /// <summary>
-        /// Создание окна с текстом.
+        /// Инициализация окна
         /// </summary>
-        /// <param name="text">Текст для отображения</param>
-        public MyMessageBox(string text)
+        /// <param name="message">Текст для отображения</param>
+        public MyMessageBox(string message)
         {
             InitializeComponent();
-            MessageText.Text = text;
+            MessageText.Text = message;
         }
 
         /// <summary>
-        /// Нажатие на клавишу ок
+        /// Нажатие кнопки ок
         /// </summary>
-        private void OkButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
+
+        /// <summary>
+        /// Закрытие окна
+        /// </summary>
+        public void Dispose()
+        {
+            Close();
+        }
+
+        /// <summary>
+        /// Отображение окна с текстом
+        /// </summary>
+        /// <param name="message">Текст для отображения</param>
+        public static void Show(string message)
+        {
+            using (MyMessageBox mmb = new MyMessageBox(message))
+            {
+                mmb.ShowDialog();
+            }
+        }
+
+
     }
 }

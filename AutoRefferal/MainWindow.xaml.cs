@@ -26,6 +26,9 @@ namespace AutoRefferal
             LoadAll();
         }
 
+        /// <summary>
+        /// Загрузка всех файлов
+        /// </summary>
         public void LoadAll()
         {
             LoadRefferals();
@@ -85,11 +88,14 @@ namespace AutoRefferal
         /// <summary>
         /// Запуск автоматической регистрации
         /// </summary>
-        private void StartRegButton_Click(object sender, RoutedEventArgs e)
+        private async void StartRegButton_Click(object sender, RoutedEventArgs e)
         {
             token = cancelTokenSource.Token;
-            Task task = new Task(() => { operaWebDriver.StartAutoReg(token); LoadAll(); });
+            Task<string> task = new Task<string>(() => { return operaWebDriver.StartAutoReg(token); });
             task.Start();
+            await Task.WhenAll(task);
+            LoadAll();
+            MyMessageBox.Show(task.Result);
         }
 
         /// <summary>
@@ -202,7 +208,7 @@ namespace AutoRefferal
             operaWebDriver.settings = new MySettings(PathToOperaBrowser.Text, SMSApiKey.Text, "", SelectedBrowser.SelectedValue.ToString());
             operaWebDriver.settings.SaveSettings(operaWebDriver.settings);
             operaWebDriver.SetApiKey();
-            MessageBox.Show("Настройки успешно сохранены.");
+            MyMessageBox.Show("Настройки успешно сохранены.");
         }
 
         /// <summary>

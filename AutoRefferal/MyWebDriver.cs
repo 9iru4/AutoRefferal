@@ -405,7 +405,8 @@ namespace AutoRefferal
         /// <summary>
         /// Начало работы атоматической регистрации
         /// </summary>
-        public void StartAutoReg(CancellationToken token)
+        /// <returns>Результат работы метода.</returns>
+        public string StartAutoReg(CancellationToken token)
         {
             try
             {
@@ -415,9 +416,8 @@ namespace AutoRefferal
 
                     if (accounts.Count == 0)
                     {
-                        MessageBox.Show("Аккаунты закончились.");
                         Quit();
-                        break;
+                        return "Аккаунты закончились.";
                     }
 
                     if (buffAccounts.Count > 0 && item.ActivatedAccounts < 10)
@@ -434,10 +434,8 @@ namespace AutoRefferal
                             if (token.IsCancellationRequested)
                             {
                                 Quit();
-                                MessageBox.Show("Программа остановлена по требованию пользователя.");
-                                return;
+                                return "Программа остановлена по требованию пользователя.";
                             }
-
                             try
                             {
                                 driver.Navigate().GoToUrl("https://pgbonus.ru/register");
@@ -553,14 +551,14 @@ namespace AutoRefferal
                             Quit();
                         }
                     }
-                    else MessageBox.Show("Рефералы закончились");
                 }
+                return "Рефералы закончились.";
             }
             catch (Exception ex)
             {
                 Quit();
                 WriteLog(ex.ToString());
-                MessageBox.Show("Произошло неведанное говно, программа остановленна.");
+                return "Произошло неведанное говно, программа остановленна.";
             }
         }
 

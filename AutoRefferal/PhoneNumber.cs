@@ -143,6 +143,10 @@ namespace AutoRefferal
             }
         }
 
+        /// <summary>
+        /// Повторная попытка получения кода
+        /// </summary>
+        /// <returns>Получен ли код</returns>
         public bool RetryCode()
         {
             //WebRequest request = WebRequest.Create("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + "&action=setStatus&status=3&id=" + Id);//activate number

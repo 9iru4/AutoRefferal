@@ -31,8 +31,8 @@ namespace AutoRefferal
         /// <summary>
         /// Добавление нового аккаунта
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="email"></param>
+        /// <param name="name">Имя</param>
+        /// <param name="email">Email</param>
         public Account(string name, string email)
         {
             Name = name;
