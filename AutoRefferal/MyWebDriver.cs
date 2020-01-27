@@ -293,7 +293,7 @@ namespace AutoRefferal
         /// <param name="number">Телефон</param>
         public void DeclinePhone()
         {
-            if (phone != null)
+            if (phone != null && phone.Number.Count() > 0)
             {
                 phone.DeclinePhone();
             }
@@ -324,7 +324,7 @@ namespace AutoRefferal
             if (driver.FindElement(By.ClassName("field-registrationform-email")).GetAttribute("innerHTML").Contains("зарегистрирова"))
             {
                 account.SaveAccountInfo("Проблема с имейлом");
-                accounts.Remove(accounts.Where(x => x.Email == account.Email).FirstOrDefault());
+                accounts.Remove(account);
                 Account.SaveAccounts(accounts);
                 return false;
             }
@@ -343,13 +343,13 @@ namespace AutoRefferal
                 {
                     myProxies.Where(x => x.IpAddress == currentProxy.IpAddress).FirstOrDefault().UsedActivation = 3;
                     MyProxy.SaveProxies(myProxies);
-                    Quit();
-                    return true;
+                    return false;
                 }
-                else return false;
+                else return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                WriteLog(e.ToString());
                 return false;
             }
 
@@ -363,7 +363,7 @@ namespace AutoRefferal
         public void RegisterConfirmed(Account account, Refferal refferal)
         {
             account.SaveAccountInfo("Зарегистрирован");
-            accounts.Remove(accounts.Where(x => x.Email == account.Email).FirstOrDefault());
+            accounts.Remove(accounts.First());
             Account.SaveAccounts(accounts);
             refferal.ActivatedAccounts++;
             Refferal.SaveRefferals(refferals);
@@ -384,7 +384,7 @@ namespace AutoRefferal
         public void RegistrationNotConfirmed(Account account)
         {
             account.SaveAccountInfo("Использован, но не подтвержден");
-            accounts.Remove(accounts.Where(x => x.Email == account.Email).FirstOrDefault());
+            accounts.Remove(accounts.First());
             Account.SaveAccounts(accounts);
         }
 
@@ -395,10 +395,8 @@ namespace AutoRefferal
         public void RegistrationNotComplited(Account account)
         {
             account.SaveAccountInfo("Аккаунт не зарегистирован");
-            accounts.Remove(accounts.Where(x => x.Email == account.Email).FirstOrDefault());
+            accounts.Remove(accounts.First());
             Account.SaveAccounts(accounts);
-            //if (!phone.UseAgain)
-            //  phone.UseAgain = true;
         }
 
         /// <summary>
@@ -409,155 +407,114 @@ namespace AutoRefferal
         {
             try
             {
-                Random rnd = new Random();
-
                 for (; ; )
                 {
-                    if (refferals.Where(x => x.ActivatedAccounts < 10).Count() == 0)
-                        return "Рефералы закончились.";
+                    try
+                    {
+                        if (token.IsCancellationRequested)
+                            return "Программа остановлена по требованию пользователя.";
 
-                    var item = refferals[rnd.Next(0, refferals.Count)];
+                        if (refferals.Where(x => x.ActivatedAccounts < 10).Count() == 0)
+                            return "Рефералы закончились.";
 
-                    if (item.ActivatedAccounts == 10) continue;
+                        if (accounts.Count == 0)
+                            return "Аккаунты закончились.";
 
-                    var buffAccounts = new List<Account>(accounts);
+                        Random rnd = new Random();
+                        var item = refferals[rnd.Next(0, refferals.Count)];
 
-                    if (accounts.Count == 0)
+                        if (item.ActivatedAccounts == 10) continue;
+
+                        if (settings.SelectedBrowser == "Chrome")
+                            InitializeChromeWithProxy();
+                        else InitializeOperaDriver();
+
+                        try
+                        {
+                            driver.Navigate().GoToUrl("https://pgbonus.ru/register");
+                        }
+                        catch (Exception ex)
+                        {
+                            WriteLog(ex.ToString());
+                            Thread.Sleep(1000);
+                        }
+
+                        if (settings.SelectedBrowser == "Chrome" && !IsProxyCanUsed())
+                        {
+                            Quit();
+                            continue;
+                        }
+
+                        SendName(accounts.First().Name);
+
+                        SendEmail(accounts.First().Email);
+
+                        SendRefferal(item.Code);
+
+                        if (IsRegistrationAvaliable())
+                        {
+                            if (IsEmailUsed(accounts.First()))
+                            {
+                                CheckPass();
+
+                                if (!GetNumberPhone())
+                                {
+                                    Quit();
+                                    continue;
+                                }
+
+                                if (!GetCode(false))
+                                {
+                                    DeclinePhone();
+                                    Quit();
+                                    continue;
+                                }
+
+                                CheckAgrrement();
+
+                                if (!IsRegistrationAvaliable())
+                                {
+                                    DeclinePhone();
+                                    Quit();
+                                    continue;
+                                }
+
+                                SubmitReg();
+
+                                try
+                                {
+                                    driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
+                                    Thread.Sleep(3000);
+                                }
+                                catch (Exception ex)
+                                {
+                                    WriteLog(ex.ToString());
+                                }
+
+                                switch (CheckRegistrationState())
+                                {
+                                    case RegistrationState.Confirmed:
+                                        RegisterConfirmed(accounts.First(), item);
+                                        phone.NumberConformation();
+                                        break;
+                                    case RegistrationState.NotConfirmed:
+                                        RegistrationNotConfirmed(accounts.First());
+                                        phone.NumberConformation();
+                                        break;
+                                    case RegistrationState.NotRegistered:
+                                        RegistrationNotComplited(accounts.First());
+                                        break;
+                                }
+                                Thread.Sleep(2000);
+                            }
+                        }
+                        Quit();
+                    }
+                    catch (Exception e)
                     {
                         Quit();
-                        return "Аккаунты закончились.";
-                    }
-
-                    if (buffAccounts.Count > 0)
-                    {
-                        for (int i = 0; item.ActivatedAccounts < 10; i++)
-                        {
-                            if (accounts.Count == 0)
-                                break;
-
-                            if (settings.SelectedBrowser == "Chrome")
-                                InitializeChromeWithProxy();
-                            else InitializeOperaDriver();
-
-                            if (token.IsCancellationRequested)
-                            {
-                                Quit();
-                                return "Программа остановлена по требованию пользователя.";
-                            }
-                            try
-                            {
-                                driver.Navigate().GoToUrl("https://pgbonus.ru/register");
-                            }
-                            catch (Exception ex)
-                            {
-                                WriteLog(ex.ToString());
-                                Thread.Sleep(1000);
-                            }
-
-                            if (IsProxyCanUsed() && settings.SelectedBrowser == "Chrome")
-                            {
-                                i--;
-                                Quit();
-                                continue;
-                            }
-                            try
-                            {
-                                SendName(buffAccounts[i].Name);
-                            }
-                            catch (Exception ex)
-                            {
-                                WriteLog(ex.ToString());
-                                i--;
-                                Quit();
-                                continue;
-                            }
-
-                            try
-                            {
-                                SendEmail(buffAccounts[i].Email);
-                            }
-                            catch (Exception ex)
-                            {
-                                WriteLog(ex.ToString());
-                                i--;
-                                Quit();
-                                continue;
-                            }
-
-                            try
-                            {
-                                SendRefferal(item.Code);
-                            }
-                            catch (Exception ex)
-                            {
-                                WriteLog(ex.ToString());
-                                i--;
-                                Quit();
-                                continue;
-                            }
-
-                            if (IsRegistrationAvaliable())
-                            {
-                                if (IsEmailUsed(buffAccounts[i]))
-                                {
-                                    CheckPass();
-
-                                    //if (!phone.UseAgain)
-                                    //{
-                                    GetNumberPhone();
-                                    //}
-
-                                    if (!GetCode(false))
-                                    {
-                                        DeclinePhone();
-                                        Quit();
-                                        i--;
-                                        phone.UseAgain = false;
-                                        continue;
-                                    }
-
-                                    CheckAgrrement();
-
-                                    if (IsRegistrationAvaliable())
-                                    {
-
-                                        SubmitReg();
-
-                                        try
-                                        {
-                                            driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
-                                            Thread.Sleep(3000);
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            WriteLog(ex.ToString());
-                                        }
-
-                                        switch (CheckRegistrationState())
-                                        {
-                                            case RegistrationState.Confirmed:
-                                                RegisterConfirmed(buffAccounts[i], item);
-                                                phone.NumberConformation();
-                                                break;
-                                            case RegistrationState.NotConfirmed:
-                                                RegistrationNotConfirmed(buffAccounts[i]);
-                                                phone.NumberConformation();
-                                                break;
-                                            case RegistrationState.NotRegistered:
-                                                RegistrationNotComplited(buffAccounts[i]);
-                                                break;
-                                        }
-                                        Thread.Sleep(2000);
-                                    }
-                                    else
-                                    {
-                                        DeclinePhone();
-                                        i--;
-                                    }
-                                }
-                            }
-                            Quit();
-                        }
+                        DeclinePhone();
+                        WriteLog(e.ToString());
                     }
                 }
             }
