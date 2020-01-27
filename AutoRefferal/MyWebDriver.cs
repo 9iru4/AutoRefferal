@@ -409,8 +409,16 @@ namespace AutoRefferal
         {
             try
             {
-                foreach (var item in refferals)
+                Random rnd = new Random();
+                for (; ; )
                 {
+                    if (refferals.Where(x => x.ActivatedAccounts < 10).Count() == 0)
+                        return "Рефералы закончились.";
+
+                    var item = refferals[rnd.Next(0, refferals.Count)];
+
+                    if (item.ActivatedAccounts > 9) continue;
+
                     var buffAccounts = new List<Account>(accounts);
 
                     if (accounts.Count == 0)
@@ -419,7 +427,7 @@ namespace AutoRefferal
                         return "Аккаунты закончились.";
                     }
 
-                    if (buffAccounts.Count > 0 && item.ActivatedAccounts < 10)
+                    if (buffAccounts.Count > 0)
                     {
                         for (int i = 0; item.ActivatedAccounts < 10; i++)
                         {
@@ -551,13 +559,12 @@ namespace AutoRefferal
                         }
                     }
                 }
-                return "Рефералы закончились.";
             }
             catch (Exception ex)
             {
                 Quit();
                 WriteLog(ex.ToString());
-                return "Произошло неведанное говно, программа остановленна.";
+                return "Произошла ошибка, файл лог обновлен, программа остановленна.";
             }
         }
 
