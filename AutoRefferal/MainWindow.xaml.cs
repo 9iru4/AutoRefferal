@@ -111,7 +111,7 @@ namespace AutoRefferal
                     MyMessageBox.Show("Рефералы закончились.");
                     break;
                 case AutoRegState.StoppedByException:
-                    MyMessageBox.Show("Произошла неизвестная ошибка.");
+                    MyMessageBox.Show("Произошла неизвестная ошибка, она записана в лог файл. Сообщите разработчику об этой ошибке любым удобным для вас способом.");
                     break;
             }
             ChangeProgramState(false);

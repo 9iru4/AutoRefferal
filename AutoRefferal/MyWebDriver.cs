@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Windows;
 
@@ -515,7 +516,13 @@ namespace AutoRefferal
                         }
                         Quit();
                     }
-                    catch (Exception e)
+                    catch (NoSuchElementException e)
+                    {
+                        Quit();
+                        DeclinePhone();
+                        WriteLog(e.ToString());
+                    }
+                    catch (WebDriverException e)
                     {
                         Quit();
                         DeclinePhone();
