@@ -294,7 +294,7 @@ namespace AutoRefferal
         /// <param name="number">Телефон</param>
         public void DeclinePhone()
         {
-            if (phone != null && phone.Number.Count() > 0)
+            if (phone.Number != null)
             {
                 phone.DeclinePhone();
             }
