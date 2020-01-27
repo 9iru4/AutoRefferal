@@ -404,7 +404,7 @@ namespace AutoRefferal
         /// Начало работы атоматической регистрации
         /// </summary>
         /// <returns>Результат работы метода.</returns>
-        public string StartAutoReg(CancellationToken token)
+        public AutoRegState StartAutoReg(CancellationToken token)
         {
             try
             {
@@ -413,13 +413,13 @@ namespace AutoRefferal
                     try
                     {
                         if (token.IsCancellationRequested)
-                            return "Программа остановлена по требованию пользователя.";
+                            return AutoRegState.StoppedByUser;
 
                         if (refferals.Where(x => x.ActivatedAccounts < 10).Count() == 0)
-                            return "Рефералы закончились.";
+                            return AutoRegState.NotEnoughRefferals;
 
                         if (accounts.Count == 0)
-                            return "Аккаунты закончились.";
+                            return AutoRegState.NotEnoughAccounts;
 
                         Random rnd = new Random();
                         var item = refferals[rnd.Next(0, refferals.Count)];
@@ -429,7 +429,7 @@ namespace AutoRefferal
                         if (settings.SelectedBrowser == "Chrome")
                         {
                             if (myProxies.Where(x => x.UsedActivation < 3).Count() == 0)
-                                return "";
+                                return AutoRegState.NotEnoughProxies;
                             InitializeChromeWithProxy();
                         }
                         else InitializeOperaDriver();
@@ -527,7 +527,7 @@ namespace AutoRefferal
             {
                 Quit();
                 WriteLog(ex.ToString());
-                return "Произошла ошибка, файл лог обновлен, программа остановленна.";
+                return AutoRegState.StoppedByException;
             }
         }
 
