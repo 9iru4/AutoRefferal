@@ -12,6 +12,7 @@ namespace AutoRefferal
 {
     public enum RegistrationState { Confirmed, NotConfirmed, NotRegistered }
 
+    public enum AutoRegState { StoppedByUser, NotEnoughProxies, NotEnoughAccounts, NotEnoughRefferals, StoppedByException }
     /// <summary>
     /// Класс описывающий взаимодейстиве с браузером
     /// </summary>
@@ -426,7 +427,11 @@ namespace AutoRefferal
                         if (item.ActivatedAccounts == 10) continue;
 
                         if (settings.SelectedBrowser == "Chrome")
+                        {
+                            if (myProxies.Where(x => x.UsedActivation < 3).Count() == 0)
+                                return "";
                             InitializeChromeWithProxy();
+                        }
                         else InitializeOperaDriver();
 
                         try
