@@ -90,16 +90,47 @@ namespace AutoRefferal
         /// </summary>
         private async void StartRegButton_Click(object sender, RoutedEventArgs e)
         {
-            StopButton.IsEnabled = true;
-            StartRegButton.IsEnabled = false;
+            ChangeProgramState(true);
             token = cancelTokenSource.Token;
-            Task<string> task = new Task<string>(() => { return operaWebDriver.StartAutoReg(token); });
+            Task<AutoRegState> task = new Task<AutoRegState>(() => { return operaWebDriver.StartAutoReg(token); });
             task.Start();
             await Task.WhenAll(task);
             LoadAll();
-            MyMessageBox.Show(task.Result);
-            StopButton.IsEnabled = false;
-            StartRegButton.IsEnabled = true;
+            switch (task.Result)
+            {
+                case AutoRegState.StoppedByUser:
+                    MyMessageBox.Show("Программа остановелна по требованию пользователя.");
+                    cancelTokenSource = new CancellationTokenSource();
+                    break;
+                case AutoRegState.NotEnoughProxies:
+                    MyMessageBox.Show("Прокси закончились.");
+                    break;
+                case AutoRegState.NotEnoughAccounts:
+                    MyMessageBox.Show("Аккаунты закончились.");
+                    break;
+                case AutoRegState.NotEnoughRefferals:
+                    MyMessageBox.Show("Рефералы закончились.");
+                    break;
+                case AutoRegState.StoppedByException:
+                    MyMessageBox.Show("Произошла неизвестная ошибка.");
+                    break;
+            }
+            ChangeProgramState(false);
+
+        }
+
+        public void ChangeProgramState(bool state)
+        {
+            if (state)
+            {
+                StopButton.IsEnabled = true;
+                StartRegButton.IsEnabled = false;
+            }
+            else
+            {
+                StopButton.IsEnabled = false;
+                StartRegButton.IsEnabled = true;
+            }
         }
 
         /// <summary>
@@ -116,6 +147,7 @@ namespace AutoRefferal
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
             cancelTokenSource.Cancel();
+            StopButton.IsEnabled = false;
         }
 
         /// <summary>
