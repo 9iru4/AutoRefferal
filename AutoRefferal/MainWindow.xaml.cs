@@ -90,12 +90,16 @@ namespace AutoRefferal
         /// </summary>
         private async void StartRegButton_Click(object sender, RoutedEventArgs e)
         {
+            StopButton.IsEnabled = true;
+            StartRegButton.IsEnabled = false;
             token = cancelTokenSource.Token;
             Task<string> task = new Task<string>(() => { return operaWebDriver.StartAutoReg(token); });
             task.Start();
             await Task.WhenAll(task);
             LoadAll();
             MyMessageBox.Show(task.Result);
+            StopButton.IsEnabled = false;
+            StartRegButton.IsEnabled = true;
         }
 
         /// <summary>
