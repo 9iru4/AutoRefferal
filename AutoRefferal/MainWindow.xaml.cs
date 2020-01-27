@@ -100,7 +100,6 @@ namespace AutoRefferal
             {
                 case AutoRegState.StoppedByUser:
                     MyMessageBox.Show("Программа остановелна по требованию пользователя.");
-                    cancelTokenSource = new CancellationTokenSource();
                     break;
                 case AutoRegState.NotEnoughProxies:
                     MyMessageBox.Show("Прокси закончились.");
@@ -116,7 +115,7 @@ namespace AutoRefferal
                     break;
             }
             ChangeProgramState(false);
-
+            cancelTokenSource = new CancellationTokenSource();
         }
 
         public void ChangeProgramState(bool state)
