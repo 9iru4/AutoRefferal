@@ -117,7 +117,11 @@ namespace AutoRefferal
             ChangeProgramState(false);
             cancelTokenSource = new CancellationTokenSource();
         }
-
+        
+        /// <summary>
+        /// Изменение состояния кнопок
+        /// </summary>
+        /// <param name="state">Да-программа запущена, нет - готова к запуску</param>
         public void ChangeProgramState(bool state)
         {
             if (state)
