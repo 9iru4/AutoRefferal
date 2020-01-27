@@ -410,6 +410,7 @@ namespace AutoRefferal
             try
             {
                 Random rnd = new Random();
+
                 for (; ; )
                 {
                     if (refferals.Where(x => x.ActivatedAccounts < 10).Count() == 0)
@@ -417,7 +418,7 @@ namespace AutoRefferal
 
                     var item = refferals[rnd.Next(0, refferals.Count)];
 
-                    if (item.ActivatedAccounts > 9) continue;
+                    if (item.ActivatedAccounts == 10) continue;
 
                     var buffAccounts = new List<Account>(accounts);
 
