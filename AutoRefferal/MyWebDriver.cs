@@ -416,14 +416,15 @@ namespace AutoRefferal
                         if (token.IsCancellationRequested)
                             return AutoRegState.StoppedByUser;
 
-                        if (refferals.Where(x => x.ActivatedAccounts < 10).Count() == 0)
+                        int refcount = refferals.Where(x => x.ActivatedAccounts < 10).Count();
+                        if (refcount == 0)
                             return AutoRegState.NotEnoughRefferals;
 
                         if (accounts.Count == 0)
                             return AutoRegState.NotEnoughAccounts;
 
                         Random rnd = new Random();
-                        var item = refferals[rnd.Next(0, refferals.Count)];
+                        var item = refferals.Where(x => x.ActivatedAccounts < 10).ElementAt(rnd.Next(0, refcount));
 
                         if (item.ActivatedAccounts == 10) continue;
 
