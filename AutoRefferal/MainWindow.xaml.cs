@@ -113,6 +113,9 @@ namespace AutoRefferal
                 case AutoRegState.StoppedByException:
                     MyMessageBox.Show("Произошла неизвестная ошибка, она записана в лог файл. Сообщите разработчику об этой ошибке любым удобным для вас способом.");
                     break;
+                case AutoRegState.SMSServiceCrashed:
+                    MyMessageBox.Show("Проблемы с сервером для получения номеров.");
+                    break;
             }
             ChangeProgramState(false);
             cancelTokenSource = new CancellationTokenSource();

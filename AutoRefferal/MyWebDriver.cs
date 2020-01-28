@@ -13,7 +13,7 @@ namespace AutoRefferal
 {
     public enum RegistrationState { Confirmed, NotConfirmed, NotRegistered }
 
-    public enum AutoRegState { StoppedByUser, NotEnoughProxies, NotEnoughAccounts, NotEnoughRefferals, StoppedByException }
+    public enum AutoRegState { StoppedByUser, NotEnoughProxies, NotEnoughAccounts, NotEnoughRefferals, StoppedByException, SMSServiceCrashed }
     /// <summary>
     /// Класс описывающий взаимодейстиве с браузером
     /// </summary>
@@ -527,6 +527,13 @@ namespace AutoRefferal
                         Quit();
                         DeclinePhone();
                         WriteLog(e.ToString());
+                    }
+                    catch (WebException e)
+                    {
+                        Quit();
+                        DeclinePhone();
+                        WriteLog(e.ToString());
+                        return AutoRegState.SMSServiceCrashed;
                     }
                 }
             }
