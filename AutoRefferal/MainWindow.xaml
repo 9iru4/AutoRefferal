@@ -18,13 +18,13 @@
             </TabItem>
             <TabItem Header="Найстройки">
                 <Grid Background="#474343">
-                    <TextBox Name="PathToOperaBrowser" HorizontalAlignment="Left" Height="23" Margin="15,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="381"/>
-                    <TextBox Name="SMSApiKey" HorizontalAlignment="Left" Height="23" Margin="15,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="381"/>
-                    <Label Content="Путь к опере" HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Top"/>
-                    <Label Content="API ключ для сервиса смс" HorizontalAlignment="Left" Margin="15,54,0,0" VerticalAlignment="Top"/>
-                    <Button Name="SaveSettingsButton" Content="сохранить" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="207,144,0,0" VerticalAlignment="Top" Width="101" Height="39" Click="SaveSettingsButton_Click"/>
-                    <Label Content="Браузер" HorizontalAlignment="Left" Margin="15,111,0,0" VerticalAlignment="Top"/>
-                    <ComboBox Name="SelectedBrowser" SelectedIndex="0" SelectedValuePath="Content" HorizontalAlignment="Left" Margin="15,137,0,0" VerticalAlignment="Top" Width="120">
+                    <TextBox Name="PathToOperaBrowser" HorizontalAlignment="Left" Height="23" Margin="15,19,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="366"/>
+                    <TextBox Name="SMSApiKey" HorizontalAlignment="Left" Height="23" Margin="15,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="284"/>
+                    <Label Content="Путь к опере" HorizontalAlignment="Left" Margin="15,-4,0,0" VerticalAlignment="Top"/>
+                    <Label Content="API ключ для сервиса смс" HorizontalAlignment="Left" Margin="15,45,0,0" VerticalAlignment="Top"/>
+                    <Button Name="SaveSettingsButton" Content="сохранить" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="198,153,0,0" VerticalAlignment="Top" Width="101" Height="39" Click="SaveSettingsButton_Click"/>
+                    <Label Content="Браузер" HorizontalAlignment="Left" Margin="15,97,0,0" VerticalAlignment="Top"/>
+                    <ComboBox Name="SelectedBrowser" SelectedIndex="0" SelectedValuePath="Content" HorizontalAlignment="Left" Margin="15,123,0,0" VerticalAlignment="Top" Width="120">
                         <ComboBoxItem Name="Chrome">Chrome</ComboBoxItem>
                         <ComboBoxItem Name="Opera">Opera</ComboBoxItem>
                     </ComboBox>

@@ -108,7 +108,9 @@ namespace AutoRefferal
             }
             options.AddArgument("--incognito");
             options.AddArgument("--user-data-dir=" + Directory.GetCurrentDirectory() + @"\Chrome");
-            driver = new ChromeDriver(options);
+            ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true;
+            driver = new ChromeDriver(service, options);
             driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(40);
         }
 

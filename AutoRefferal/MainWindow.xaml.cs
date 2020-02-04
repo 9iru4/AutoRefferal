@@ -120,7 +120,7 @@ namespace AutoRefferal
             ChangeProgramState(false);
             cancelTokenSource = new CancellationTokenSource();
         }
-        
+
         /// <summary>
         /// Изменение состояния кнопок
         /// </summary>
