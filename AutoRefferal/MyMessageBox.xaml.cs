@@ -39,12 +39,14 @@ namespace AutoRefferal
         /// Отображение окна с текстом
         /// </summary>
         /// <param name="message">Текст для отображения</param>
-        public static void Show(string message)
+        public static void Show(string message, Window owner)
         {
             using (MyMessageBox mmb = new MyMessageBox(message))
             {
+                mmb.Owner = owner;
                 mmb.ShowDialog();
             }
+
         }
 
 

@@ -99,22 +99,22 @@ namespace AutoRefferal
             switch (task.Result)
             {
                 case AutoRegState.StoppedByUser:
-                    MyMessageBox.Show("Программа остановелна по требованию пользователя.");
+                    MyMessageBox.Show("Программа остановелна по требованию пользователя.", this);
                     break;
                 case AutoRegState.NotEnoughProxies:
-                    MyMessageBox.Show("Прокси закончились.");
+                    MyMessageBox.Show("Прокси закончились.", this);
                     break;
                 case AutoRegState.NotEnoughAccounts:
-                    MyMessageBox.Show("Аккаунты закончились.");
+                    MyMessageBox.Show("Аккаунты закончились.", this);
                     break;
                 case AutoRegState.NotEnoughRefferals:
-                    MyMessageBox.Show("Рефералы закончились.");
+                    MyMessageBox.Show("Рефералы закончились.", this);
                     break;
                 case AutoRegState.StoppedByException:
-                    MyMessageBox.Show("Произошла неизвестная ошибка, она записана в лог файл. Сообщите разработчику об этой ошибке любым удобным для вас способом.");
+                    MyMessageBox.Show("Произошла неизвестная ошибка, она записана в лог файл. Сообщите разработчику об этой ошибке любым удобным для вас способом.", this);
                     break;
                 case AutoRegState.SMSServiceCrashed:
-                    MyMessageBox.Show("Проблемы с сервером для получения номеров.");
+                    MyMessageBox.Show("Проблемы с сервером для получения номеров.", this);
                     break;
             }
             ChangeProgramState(false);
@@ -250,7 +250,7 @@ namespace AutoRefferal
             operaWebDriver.settings = new MySettings(PathToOperaBrowser.Text, SMSApiKey.Text, "", SelectedBrowser.SelectedValue.ToString());
             operaWebDriver.settings.SaveSettings(operaWebDriver.settings);
             operaWebDriver.SetApiKey();
-            MyMessageBox.Show("Настройки успешно сохранены.");
+            MyMessageBox.Show("Настройки успешно сохранены.", this);
         }
 
         /// <summary>
