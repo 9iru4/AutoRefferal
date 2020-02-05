@@ -32,7 +32,7 @@
             </TabItem>
             <TabItem Header="Рефералы">
                 <Grid Background="#474343">
-                    <DataGrid Name="RefferalsDataGrid" Style="{StaticResource AzureDataGrid}" HorizontalAlignment="Left" Height="167" VerticalAlignment="Top" Width="499">
+                    <DataGrid Name="RefferalsDataGrid" CanUserAddRows="False" Style="{StaticResource AzureDataGrid}" HorizontalAlignment="Left" Height="167" VerticalAlignment="Top" Width="499">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Удалить" CanUserResize="False"  Width="70">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -50,7 +50,7 @@
             </TabItem>
             <TabItem Header="Прокси">
                 <Grid Background="#474343">
-                    <DataGrid Name="ProxiesDataGrid" Style="{StaticResource AzureDataGrid}" HorizontalAlignment="Left" Height="167" VerticalAlignment="Top" Width="499">
+                    <DataGrid Name="ProxiesDataGrid" CanUserAddRows="False" Style="{StaticResource AzureDataGrid}" HorizontalAlignment="Left" Height="167" VerticalAlignment="Top" Width="499">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Удалить" CanUserResize="False"  Width="70">
                                 <DataGridTemplateColumn.CellTemplate>
