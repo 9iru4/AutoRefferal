@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Opera;
+using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -106,8 +107,18 @@ namespace AutoRefferal
                     break;
                 }
             }
-            options.AddArgument("--incognito");
             options.AddArgument("--user-data-dir=" + Directory.GetCurrentDirectory() + @"\Chrome");
+            if (settings.HiddenMode)
+            {
+                options.AddArgument("--headless");
+                options.AddArgument("--disable-gpu");
+                options.AddArgument("--allow-insecure-localhost");
+                options.AddArgument("--window-size=1920,1080");
+            }
+            else
+            {
+                options.AddArgument("--incognito");
+            }
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
             driver = new ChromeDriver(service, options);
@@ -166,6 +177,8 @@ namespace AutoRefferal
         {
             try
             {
+                var a = driver.Manage().Cookies;
+                driver.Manage().Cookies.DeleteAllCookies();
                 driver.Quit();
             }
             catch (Exception)
@@ -179,12 +192,13 @@ namespace AutoRefferal
         /// <returns>Зарегистрирован, Зарегистрирован но не подтвержден, не зарегистрирован</returns>
         public RegistrationState CheckRegistrationState()
         {
-            if (driver.FindElements(By.ClassName("confirmed")).Count == 2)
+            var confirms = driver.FindElements(By.ClassName("confirmed"));
+            if (confirms.Count == 2)
             {
                 WriteLog(accounts[0].Email + ":" + "2");
                 return RegistrationState.Confirmed;
             }
-            if (driver.FindElements(By.ClassName("confirmed")).Count == 1)
+            if (confirms.Count == 1)
             {
                 WriteLog(accounts[0].Email + ":" + "1");
                 return RegistrationState.NotConfirmed;
@@ -343,7 +357,7 @@ namespace AutoRefferal
         {
             try
             {
-                if (driver.PageSource.Contains("error-code"))
+                if (driver.PageSource.Count() < 50 || driver.PageSource.Contains("error-code"))
                 {
                     myProxies.Where(x => x.IpAddress == currentProxy.IpAddress).FirstOrDefault().UsedActivation = 3;
                     MyProxy.SaveProxies(myProxies);
@@ -576,7 +590,6 @@ namespace AutoRefferal
                 Thread.Sleep(30);
             }
             Thread.Sleep(1000);
-
         }
 
         /// <summary>

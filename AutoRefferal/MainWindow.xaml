@@ -28,6 +28,7 @@
                         <ComboBoxItem Name="Chrome">Chrome</ComboBoxItem>
                         <ComboBoxItem Name="Opera">Opera</ComboBoxItem>
                     </ComboBox>
+                    <CheckBox Name="HiddenMode" Content="В фоне" HorizontalAlignment="Left" Margin="21,163,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Рефералы">

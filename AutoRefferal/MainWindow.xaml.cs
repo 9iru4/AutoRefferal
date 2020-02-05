@@ -83,6 +83,7 @@ namespace AutoRefferal
             PathToOperaBrowser.Text = operaWebDriver.settings.OperaPath;
             SMSApiKey.Text = operaWebDriver.settings.SmsApiKey;
             SelectedBrowser.SelectedValue = operaWebDriver.settings.SelectedBrowser;
+            HiddenMode.IsChecked = operaWebDriver.settings.HiddenMode;
         }
 
         /// <summary>
@@ -247,7 +248,7 @@ namespace AutoRefferal
         /// </summary>
         private void SaveSettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            operaWebDriver.settings = new MySettings(PathToOperaBrowser.Text, SMSApiKey.Text, "", SelectedBrowser.SelectedValue.ToString());
+            operaWebDriver.settings = new MySettings(PathToOperaBrowser.Text, SMSApiKey.Text, "", SelectedBrowser.SelectedValue.ToString(), (bool)HiddenMode.IsChecked);
             operaWebDriver.settings.SaveSettings(operaWebDriver.settings);
             operaWebDriver.SetApiKey();
             MyMessageBox.Show("Настройки успешно сохранены.", this);

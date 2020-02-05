@@ -26,6 +26,8 @@ namespace AutoRefferal
         /// </summary>
         public string SelectedBrowser { get; set; }
 
+        public bool HiddenMode { get; set; }
+
         /// <summary>
         /// Конструктор класса
         /// </summary>
@@ -41,12 +43,13 @@ namespace AutoRefferal
         /// <param name="smsApiKey">Апи смс</param>
         /// <param name="proxyApiKey">Апи прокси</param>
         /// <param name="Browser">Браузер</param>
-        public MySettings(string operaPath, string smsApiKey, string proxyApiKey, string Browser)
+        public MySettings(string operaPath, string smsApiKey, string proxyApiKey, string Browser, bool hidden)
         {
             OperaPath = operaPath;
             SmsApiKey = smsApiKey;
             ProxyApiKey = proxyApiKey;
             SelectedBrowser = Browser;
+            HiddenMode = hidden;
         }
 
         /// <summary>
@@ -64,6 +67,7 @@ namespace AutoRefferal
                     SmsApiKey = settings.SmsApiKey;
                     ProxyApiKey = settings.ProxyApiKey;
                     SelectedBrowser = settings.SelectedBrowser;
+                    HiddenMode = settings.HiddenMode;
                 }
             }
             catch (Exception)
