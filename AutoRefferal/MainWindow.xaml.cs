@@ -46,6 +46,7 @@ namespace AutoRefferal
                 {
                     RefferalsDataGrid.ItemsSource = null;
                     RefferalsDataGrid.ItemsSource = operaWebDriver.refferals;
+                    RefferalsDataGrid.Items.Refresh();
                 });
         }
 
@@ -59,6 +60,7 @@ namespace AutoRefferal
                 {
                     ProxiesDataGrid.ItemsSource = null;
                     ProxiesDataGrid.ItemsSource = operaWebDriver.myProxies;
+                    ProxiesDataGrid.Items.Refresh();
                 });
         }
 
@@ -72,6 +74,7 @@ namespace AutoRefferal
                    {
                        AccountsDataGrid.ItemsSource = null;
                        AccountsDataGrid.ItemsSource = operaWebDriver.accounts;
+                       AccountsDataGrid.Items.Refresh();
                    });
         }
 
