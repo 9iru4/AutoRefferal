@@ -230,10 +230,20 @@ namespace AutoRefferal
                 driver.SwitchTo().Alert().Accept();
                 Thread.Sleep(1000);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                WriteLog(e.ToString());
-                return false;
+                try
+                {
+                    driver.FindElement(By.Id("phone_code-button")).Click();
+                    Thread.Sleep(1000);
+                    driver.SwitchTo().Alert().Accept();
+                    Thread.Sleep(1000);
+                }
+                catch (Exception e)
+                {
+                    WriteLog(e.ToString());
+                    return false;
+                }
             }
 
             try
