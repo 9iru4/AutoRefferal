@@ -93,20 +93,9 @@ namespace AutoRefferal
         /// <summary>
         /// Использование хрома в качестве браузера
         /// </summary>
-        public void InitializeChromeWithProxy()
+        public void InitializeChrome()
         {
             ChromeOptions options = new ChromeOptions();
-            foreach (var item in myProxies.ToList())
-            {
-                if (item.UsedActivation >= 3)
-                    continue;
-                else
-                {
-                    currentProxy = new MyProxy(item.IpAddress, item.Port);
-                    options.AddArguments("--proxy-server=socks4://" + item.IpAddress + ":" + item.Port);
-                    break;
-                }
-            }
             options.AddArgument("--user-data-dir=" + Directory.GetCurrentDirectory() + @"\Chrome");
             if (settings.HiddenMode)
             {
@@ -125,50 +114,7 @@ namespace AutoRefferal
             driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(40);
         }
 
-        /// <summary>
-        /// Добавление новых аккаунтов из файла
-        /// </summary>
-        public void AddNewAccounts(string pathToFile)
-        {
-            var res = Account.AddNewAccounts(accounts, pathToFile);
-            if (res == null)
-            {
-                MessageBox.Show("Аккаунты не добавлены.");
-            }
-            else
-                accounts = res;
-            Account.SaveAccounts(accounts);
-        }
 
-        /// <summary>
-        /// Добавление новых рефеалов из файла
-        /// </summary>
-        public void AddNewRefferals(string pathToFile)
-        {
-            var res = Refferal.GetNewRefferals(refferals, pathToFile);
-            if (res == null)
-            {
-                MessageBox.Show("Реферальные коды не добавлены.");
-            }
-            else
-                refferals = res;
-            Refferal.SaveRefferals(refferals);
-        }
-
-        /// <summary>
-        /// Добавление новых прокси из файла
-        /// </summary>
-        public void AddNewProxies(string pathToFile)
-        {
-            var res = MyProxy.GetNewProxies(myProxies, pathToFile);
-            if (res == null)
-            {
-                MessageBox.Show("Прокси не добавлены.");
-            }
-            else
-                myProxies = res;
-            MyProxy.SaveProxies(myProxies);
-        }
 
         /// <summary>
         /// Остановка драйвера
@@ -432,29 +378,14 @@ namespace AutoRefferal
                         if (token.IsCancellationRequested)
                             return AutoRegState.StoppedByUser;
 
-                        int refcount = refferals.Where(x => x.ActivatedAccounts < 10).Count();
-                        if (refcount == 0)
-                            return AutoRegState.NotEnoughRefferals;
-
-                        if (accounts.Count == 0)
-                            return AutoRegState.NotEnoughAccounts;
-
-                        Random rnd = new Random();
-                        var item = refferals.Where(x => x.ActivatedAccounts < 10).ElementAt(rnd.Next(0, refcount));
-
-                        if (item.ActivatedAccounts == 10) continue;
-
                         if (settings.SelectedBrowser == "Chrome")
                         {
-                            if (myProxies.Where(x => x.UsedActivation < 3).Count() == 0)
-                                return AutoRegState.NotEnoughProxies;
-                            InitializeChromeWithProxy();
+                            InitializeChrome();
                         }
-                        else InitializeOperaDriver();
 
                         try
                         {
-                            driver.Navigate().GoToUrl("https://pgbonus.ru/register");
+                            driver.Navigate().GoToUrl("https://bitclout.com/browse?password=2697b4d93a13a3dbcb1e2808b63c6c18c7810565fcd9ab1c1d55528ac28d8f9b");
                         }
                         catch (Exception ex)
                         {
@@ -462,17 +393,10 @@ namespace AutoRefferal
                             Thread.Sleep(1000);
                         }
 
-                        if (settings.SelectedBrowser == "Chrome" && !IsProxyCanUsed())
-                        {
-                            Quit();
-                            continue;
-                        }
-
                         SendName(accounts.First().Name);
 
                         SendEmail(accounts.First().Email);
 
-                        SendRefferal(item.Code);
 
                         if (IsRegistrationAvaliable())
                         {
@@ -517,7 +441,6 @@ namespace AutoRefferal
                                 switch (CheckRegistrationState())
                                 {
                                     case RegistrationState.Confirmed:
-                                        RegisterConfirmed(accounts.First(), item);
                                         phone.NumberConformation();
                                         break;
                                     case RegistrationState.NotConfirmed:

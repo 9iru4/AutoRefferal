@@ -18,72 +18,11 @@
             </TabItem>
             <TabItem Header="Найстройки">
                 <Grid Background="#474343">
-                    <TextBox Name="PathToOperaBrowser" HorizontalAlignment="Left" Height="23" Margin="15,19,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="366"/>
                     <TextBox Name="SMSApiKey" HorizontalAlignment="Left" Height="23" Margin="15,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="284"/>
-                    <Label Content="Путь к опере" HorizontalAlignment="Left" Margin="15,-4,0,0" VerticalAlignment="Top"/>
                     <Label Content="API ключ для сервиса смс" HorizontalAlignment="Left" Margin="15,45,0,0" VerticalAlignment="Top"/>
                     <Button Name="SaveSettingsButton" Content="сохранить" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="198,153,0,0" VerticalAlignment="Top" Width="101" Height="39" Click="SaveSettingsButton_Click"/>
                     <Label Content="Браузер" HorizontalAlignment="Left" Margin="15,97,0,0" VerticalAlignment="Top"/>
-                    <ComboBox Name="SelectedBrowser" SelectedIndex="0" SelectedValuePath="Content" HorizontalAlignment="Left" Margin="15,123,0,0" VerticalAlignment="Top" Width="120">
-                        <ComboBoxItem Name="Chrome">Chrome</ComboBoxItem>
-                        <ComboBoxItem Name="Opera">Opera</ComboBoxItem>
-                    </ComboBox>
-                    <CheckBox Name="HiddenMode" Content="В фоне" HorizontalAlignment="Left" Margin="21,163,0,0" VerticalAlignment="Top"/>
-                </Grid>
-            </TabItem>
-            <TabItem Header="Рефералы">
-                <Grid Background="#474343">
-                    <DataGrid Name="RefferalsDataGrid" CanUserAddRows="False" Style="{StaticResource AzureDataGrid}" HorizontalAlignment="Left" Height="167" VerticalAlignment="Top" Width="499">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Удалить" CanUserResize="False"  Width="70">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Click="DeleteRefferal_Click">Удалить</Button>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <Button Name="AddNewRefferalsButton" Content="Добавить новые" HorizontalAlignment="Left" Margin="53,172,0,0" VerticalAlignment="Top" Width="123" Click="AddNewRefferalsButton_Click"/>
-                    <Button Name="DeleteAllRefferalsButton" Content="Удалить все" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="317,171,0,0" VerticalAlignment="Top" Width="129" Click="DeleteAllRefferalsButton_Click"/>
-                    <Button Name="RefferalsSaveButton" Style="{DynamicResource SquareButtonStyle}" Content="Сохранить" HorizontalAlignment="Left" Margin="181,171,0,0" VerticalAlignment="Top" Width="131" Click="RefferalsSaveButton_Click"/>
-                </Grid>
-            </TabItem>
-            <TabItem Header="Прокси">
-                <Grid Background="#474343">
-                    <DataGrid Name="ProxiesDataGrid" CanUserAddRows="False" Style="{StaticResource AzureDataGrid}" HorizontalAlignment="Left" Height="167" VerticalAlignment="Top" Width="499">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Удалить" CanUserResize="False"  Width="70">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Click="DeleteProxy_Click">Удалить</Button>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <Button Name="AddNewProxiesButton" Content="Добавить новые" HorizontalAlignment="Left" Margin="53,172,0,0" VerticalAlignment="Top" Width="123" Click="AddNewProxiesButton_Click"/>
-                    <Button Name="DeleteAllProxiesButton" Content="Удалить все" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="317,171,0,0" VerticalAlignment="Top" Width="129" Click="DeleteAllProxiesButton_Click"/>
-                    <Button Name="ProxiesSaveButton" Style="{DynamicResource SquareButtonStyle}" Content="Сохранить" HorizontalAlignment="Left" Margin="181,171,0,0" VerticalAlignment="Top" Width="131" Click="ProxiesSaveButton_Click"/>
-                </Grid>
-            </TabItem>
-            <TabItem Header="Аккаунты">
-                <Grid Background="#474343">
-                    <DataGrid Name="AccountsDataGrid" IsReadOnly="True" Style="{StaticResource AzureDataGrid}" HorizontalAlignment="Left" Height="167" VerticalAlignment="Top" Width="499">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Удалить" CanUserResize="False"  Width="70">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Click="DeleteAccount_Click">Удалить</Button>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <Button Name="AddNewAccountsButton" Content="Добавить новые" HorizontalAlignment="Left" Margin="53,172,0,0" VerticalAlignment="Top" Width="123" Click="AddNewAccountsButton_Click"/>
-                    <Button Name="DeleteAllAccountsButton" Content="Удалить все" Style="{StaticResource AccentedSquareButtonStyle}" HorizontalAlignment="Left" Margin="317,171,0,0" VerticalAlignment="Top" Width="129" Click="DeleteAllAccountsButton_Click"/>
-                    <Button Visibility="Hidden" Style="{DynamicResource SquareButtonStyle}" Content="Сохранить" HorizontalAlignment="Left" Margin="181,171,0,0" VerticalAlignment="Top" Width="131"/>
-
+                    <CheckBox Name="HiddenMode" Content="В фоне" HorizontalAlignment="Left" Margin="15,128,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
         </TabControl>
