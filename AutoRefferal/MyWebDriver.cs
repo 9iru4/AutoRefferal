@@ -97,7 +97,7 @@ namespace AutoRefferal
         {
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("--user-data-dir=" + Directory.GetCurrentDirectory() + @"\Chrome");
-            options.BinaryLocation(@"C:\Users\Yegor\source\repos\9iru4\AutoRefferal\AutoRefferal\bin\Debug\chromedriver.exe");
+            options.BinaryLocation = @"C:\Program Files\Google\Chrome\Application\Chrome.exe";
 
             if (settings.HiddenMode)
             {
@@ -395,68 +395,6 @@ namespace AutoRefferal
                             Thread.Sleep(1000);
                         }
 
-                        SendName(accounts.First().Name);
-
-                        SendEmail(accounts.First().Email);
-
-
-                        if (IsRegistrationAvaliable())
-                        {
-                            if (IsEmailUsed(accounts.First()))
-                            {
-                                CheckPass();
-
-                                if (!GetNumberPhone())
-                                {
-                                    Quit();
-                                    continue;
-                                }
-
-                                if (!GetCode(false))
-                                {
-                                    DeclinePhone();
-                                    Quit();
-                                    continue;
-                                }
-
-                                CheckAgrrement();
-
-                                if (!IsRegistrationAvaliable())
-                                {
-                                    DeclinePhone();
-                                    Quit();
-                                    continue;
-                                }
-
-                                SubmitReg();
-
-                                try
-                                {
-                                    driver.Navigate().GoToUrl("https://pgbonus.ru/lk#");
-                                    Thread.Sleep(3000);
-                                }
-                                catch (Exception ex)
-                                {
-                                    WriteLog(ex.ToString());
-                                }
-
-                                switch (CheckRegistrationState())
-                                {
-                                    case RegistrationState.Confirmed:
-                                        phone.NumberConformation();
-                                        break;
-                                    case RegistrationState.NotConfirmed:
-                                        RegistrationNotConfirmed(accounts.First());
-                                        phone.NumberConformation();
-                                        break;
-                                    case RegistrationState.NotRegistered:
-                                        RegistrationNotComplited(accounts.First());
-                                        break;
-                                }
-                                Thread.Sleep(2000);
-                            }
-                        }
-                        Quit();
                     }
                     catch (NoSuchElementException e)
                     {
