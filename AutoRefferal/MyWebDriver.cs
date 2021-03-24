@@ -97,6 +97,8 @@ namespace AutoRefferal
         {
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("--user-data-dir=" + Directory.GetCurrentDirectory() + @"\Chrome");
+            options.BinaryLocation(@"C:\Users\Yegor\source\repos\9iru4\AutoRefferal\AutoRefferal\bin\Debug\chromedriver.exe");
+
             if (settings.HiddenMode)
             {
                 options.AddArgument("--headless");
